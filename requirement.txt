@@ -1,0 +1,3 @@
+Django
+Psycopg2
+Djangorestframework
