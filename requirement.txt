@@ -4,5 +4,6 @@ Psycopg2-binary
 Djangorestframework
 Djangorestframework-simplejwt
 Djoser
+pylint-django
 
 npm install --save axios react-router-dom redux redux-devtools-extension react-redux redux-thumk

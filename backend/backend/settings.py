@@ -44,6 +44,9 @@ INSTALLED_APPS = [
     'djoser',
 
     'authentication',
+    'topics',
+    'threads',
+    'ideas',
 ]
 
 MIDDLEWARE = [
