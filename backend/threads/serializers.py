@@ -80,6 +80,7 @@ class ThreadUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=50, allow_blank=True)
     content = serializers.CharField(allow_blank=True)
     pinned = serializers.BooleanField(default=False)
+
     class Meta:
         model = Thread
         fields = (
