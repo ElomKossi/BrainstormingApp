@@ -24,9 +24,9 @@ urlpatterns = [
     path('auth/', include('djoser.urls.jwt')),
 
 
-    path('forum/', include('forums.api.urls')),
-    path('thread/', include('threads.api.urls')),
-    path('post/', include('posts.api.urls')),
+    path('topic/', include('topics.urls')),
+    path('thread/', include('threads.urls')),
+    path('idea/', include('ideas.urls')),
 ]
 
 urlpatterns += [re_path(r'^.*', TemplateView.as_view(template_name='index.html'))]

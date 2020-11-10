@@ -33,7 +33,8 @@ class TopicCreateAPIView(generics.CreateAPIView):
     queryset = Topic.objects.all()
     #permission_classes = [IsAdminUser]
     permission_classes = [IsAuthenticated]
-    throttle_scope = 'create_thread'
+    #permission_classes = [AllowAny]
+    throttle_scope = 'create_topic'
 
 
 class TopicDetailAPIView(generics.RetrieveAPIView):

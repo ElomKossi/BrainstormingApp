@@ -1,9 +1,21 @@
-import React, { useEffect } from 'react';
-import Navbar from '../components/Navbar';
+import React, { useEffect, Fragment } from 'react';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
 import { connect } from 'react-redux';
 import { checkAuthenticated, load_user } from '../actions/auth';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Container from '@material-ui/core/Container';
+import { makeStyles } from '@material-ui/core/styles';
+
+const useStyles = makeStyles((theme) => ({
+    mainGrid: {
+      marginTop: theme.spacing(3),
+    },
+}));
 
 const Layout = (props) => {
+    // eslint-disable-next-line
+    const classes = useStyles();
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -15,13 +27,18 @@ const Layout = (props) => {
         }
 
         fetchData();
+        // eslint-disable-next-line
     }, []);
 
     return (
-        <div>
-            <Navbar />
-            {props.children}
-        </div>
+        <Fragment>
+            <CssBaseline />
+            <Container maxWidth="lg">
+                <Header />
+                {props.children}
+            </Container>
+            <Footer />
+        </Fragment>
     );
 };
 
