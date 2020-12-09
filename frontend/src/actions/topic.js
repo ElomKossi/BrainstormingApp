@@ -10,17 +10,23 @@ import {
     DELETE_TOPIC_SUCCESS,
     DELETE_TOPIC_FAILURE,
 
-    CREATE_TOPIC_SAVE,
-    CREATE_TOPIC_TOGGLE,
+    // CREATE_TOPIC_SAVE,
+    // CREATE_TOPIC_TOGGLE,
+
+    EDIT_TOPIC_REQUEST,
 
     USER_LOADED_FAIL,
 } from './types';
 
+import { TOPIC_URL, TOPIC_CREATE_URL, TOPIC_DELETE_URL } from './constants';
+
+import {getConfig} from '../utils/config';
+
 export const fetchTopic = () => async dispatch =>  {
     if (localStorage.getItem('access')) {
+        // eslint-disable-next-line
         const config = {
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         };
@@ -30,7 +36,7 @@ export const fetchTopic = () => async dispatch =>  {
                 type: FETCH_TOPIC_REQUEST
             })
 
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/topic/`, config);
+            const res = await axios.get(TOPIC_URL, getConfig());
 
             dispatch({
                 type: FETCH_TOPIC_SUCCESS,
@@ -50,27 +56,34 @@ export const fetchTopic = () => async dispatch =>  {
 
 export const createTopic = (newTopic) => async dispatch =>  {
     if (localStorage.getItem('access')) {
+    // eslint-disable-next-line
         const config = {
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         };
 
-        try {
-            dispatch({
-                type: CREATE_TOPIC_REQUEST
-            })
+        const body = JSON.stringify({ newTopic });
+        console.log("lien", TOPIC_CREATE_URL)
+        console.log(newTopic)
+        console.log(body)
 
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/topic/create/`, newTopic, config);
+        dispatch({
+            type: CREATE_TOPIC_REQUEST,
+            newTopic
+        })
+
+        try {
+            const res = await axios.post(`${process.env.REACT_APP_API_URL}topic/create/`, newTopic, getConfig());
 
             dispatch({
                 type: CREATE_TOPIC_SUCCESS,
-                payload: res.data
+                res
             })
-        } catch (err) {
+        } catch (error) {
             dispatch({
-                type: CREATE_TOPIC_FAILURE
+                type: CREATE_TOPIC_FAILURE,
+                error
             });
         }
     } else {
@@ -82,9 +95,9 @@ export const createTopic = (newTopic) => async dispatch =>  {
 
 export const deleteTopic = (idTopic) => async dispatch =>  {
     if (localStorage.getItem('access')) {
+        // eslint-disable-next-line
         const config = {
             headers: {
-                'Accept': 'application/json',
                 'Content-Type': 'application/json'
             }
         };
@@ -93,8 +106,8 @@ export const deleteTopic = (idTopic) => async dispatch =>  {
             dispatch({
                 type: DELETE_TOPIC_REQUEST
             })
-            url = '/topic/' + idTopic + '/delete/'
-            const res = await axios.delete(`${process.env.REACT_APP_API_URL}` + url, newTopic, config);
+
+            const res = await axios.delete(TOPIC_URL + idTopic + TOPIC_DELETE_URL, getConfig());
 
             dispatch({
                 type: DELETE_TOPIC_SUCCESS,

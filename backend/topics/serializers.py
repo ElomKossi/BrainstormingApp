@@ -92,7 +92,6 @@ class TopicCreateSerializer(serializers.ModelSerializer):
             'creator',
             'created_at',
             'last_activity',
-            'members'
         )
         read_only_fields = ('id', 'pinned', 'creator', 'created_at', 'last_activity')
         lookup_field = 'slug'

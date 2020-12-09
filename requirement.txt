@@ -1,9 +1,7 @@
-Django
-Psycopg2
-Psycopg2-binary
-Djangorestframework
-Djangorestframework-simplejwt
-Djoser
-pylint-django
-
-npm install --save axios react-router-dom redux redux-devtools-extension react-redux redux-thumk
+Django==3.0.7
+psycopg2==2.8.5
+psycopg2-binary==2.8.5
+djangorestframework==3.11.0
+djangorestframework-simplejwt==4.5.0
+djoser==2.0.3
+django-cors-headers==3.5.0

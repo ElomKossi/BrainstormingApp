@@ -4,16 +4,20 @@ import { connect } from 'react-redux';
 import { logout } from '../actions/auth';
 
 import { makeStyles } from '@material-ui/core/styles';
+import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
+import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import IconButton from '@material-ui/core/IconButton';
 import AccountCircle from '@material-ui/icons/AccountCircle';
 import Button from '@material-ui/core/Button';
-import Box from '@material-ui/core/Box';
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        flexGrow: 1,
+    },
     toolbar: {
         borderBottom: `1px solid ${theme.palette.divider}`,
     },
@@ -31,6 +35,9 @@ const useStyles = makeStyles((theme) => ({
     },
     menuButton: {
         marginRight: theme.spacing(2),
+    },
+    title: {
+      flexGrow: 1,
     },
 }));
 
@@ -51,111 +58,83 @@ const Header = ({ auth, logout, isAuthenticated }) => {
 
     const authLinks = (
         <Fragment>
-            <Button>
-                <Link to='/' color="inherit">
-                    <Typography
-                    component="h2"
-                    variant="h5"
-                    color="inherit"
-                    align="center"
-                    noWrap
-                    className={classes.toolbarTitle}>
-                        BRAIN
-                    </Typography>
-                </Link>
-            </Button>
-            <div>
-                <IconButton
-                aria-label="account of current user"
-                aria-controls="menu-appbar"
-                aria-haspopup="true"
-                onClick={handleMenu}
-                color="inherit">
-                    {user ? `${user.username}` : ''}
-                    <AccountCircle />
-                </IconButton>
-                <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorEl}
-                    anchorOrigin={{vertical: 'top',horizontal: 'right',}}
-                    keepMounted
-                    transformOrigin={{vertical: 'top', horizontal: 'right',}}
-                    open={open}
-                    onClose={handleClose}>
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleClose}>My account</MenuItem>
-                    <MenuItem onClick={logout}>Logout</MenuItem>
-                </Menu>
-            </div>
-
-            {/* <Nav className="mr-auto">
-                <Nav.Link href="#features">Features</Nav.Link>
-                <Nav.Link href="#pricing">Pricing</Nav.Link>
-                <NavDropdown title="Dropdown" id="collasible-nav-dropdown">
-                    <NavDropdown.Item href="#action/3.1">Action</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.2">Another action</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.3">Something</NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
-                </NavDropdown>
-            </Nav>
-            <Nav>
-                <NavDropdown title={user ? `${user.username}` : ''} id="collasible-nav-dropdown">
-                    <NavDropdown.Item href="#action/3.1">Profile</NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={this.props.logout}>Logout</NavDropdown.Item>
-                </NavDropdown>
-            </Nav> */}
+                <Grid justify="space-between" container >
+                    <Grid item>
+                        <Button edge="start" >
+                            <Link to='/' color="inherit" style={{ textDecoration: 'none' }}>
+                                <Typography
+                                component="h2"
+                                variant="h5"
+                                color="inherit"
+                                align="center"
+                                noWrap
+                                className={classes.toolbarTitle}>
+                                    BRAINSTORMING
+                                </Typography>
+                            </Link>
+                        </Button>
+                    </Grid>
+                    <Grid item>
+                        <IconButton
+                        aria-label="account of current user"
+                        aria-controls="menu-appbar"
+                        aria-haspopup="true"
+                        onClick={handleMenu}
+                        color="inherit">
+                            <Typography variant="h6" className={classes.title}>
+                                {user ? `${user.username}` : ''}
+                            </Typography>
+                            <AccountCircle />
+                        </IconButton>
+                        <Menu
+                            id="menu-appbar"
+                            anchorEl={anchorEl}
+                            anchorOrigin={{vertical: 'top',horizontal: 'right',}}
+                            keepMounted
+                            transformOrigin={{vertical: 'top', horizontal: 'right',}}
+                            open={open}
+                            onClose={handleClose}>
+                            <MenuItem onClick={handleClose}>Profile</MenuItem>
+                            <MenuItem onClick={handleClose}>My account</MenuItem>
+                            <MenuItem onClick={logout}>Logout</MenuItem>
+                        </Menu>
+                    </Grid>
+                </Grid>
         </Fragment>
     );
 
     const guestLinks = (
         <Fragment>
-        <Button >
-            <Link size="small" to='/login' variant="body2" style={{ textDecoration: 'none' }}>
-                Subscribe
-            </Link>
-        </Button>
-                    <Typography
-                    component="h2"
-                    variant="h5"
-                    color="inherit"
-                    align="center"
-                    noWrap
-                    className={classes.toolbarTitle}>
-                        BRAINSTORMING
-                    </Typography>
+            <Button >
+                <Link size="small" to='/login' variant="body2" style={{ textDecoration: 'none' }}>
+                    Subscribe
+                </Link>
+            </Button>
+            <Typography
+            component="h2"
+            variant="h5"
+            color="inherit"
+            align="center"
+            noWrap
+            className={classes.toolbarTitle}>
+                BRAINSTORMING
+            </Typography>
             <Button>
                 <Link variant="body2" size="small" to='/signup' style={{ textDecoration: 'none' }}>
                     Sign up
                 </Link>
             </Button>
-            {/* <Nav className="mr-auto">
-                <Nav.Link>
-                    <NavLink className="nav-link" exact to='/login'>Login</NavLink>
-                </Nav.Link>
-                <Nav.Link>
-                    <NavLink className="nav-link" exact to='/signup'>Sign Up</NavLink>
-                </Nav.Link>
-            </Nav> */}
         </Fragment>
     );
 
     return (
-        <Fragment>
-            <Toolbar className={classes.toolbar}>
-                { <Fragment>{ isAuthenticated ? authLinks : guestLinks }</Fragment> }
-            </Toolbar>
-        </Fragment>
-        // <Navbar bg="dark" variant="dark">
-        //     <Navbar.Brand>
-        //         <Link className="navbar-brand" to='/'>BRAIN</Link>
-        //     </Navbar.Brand>
-        //     <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-        //     <Navbar.Collapse id="responsive-navbar-nav">
-        //         { <Fragment>{ isAuthenticated ? authLinks : guestLinks }</Fragment> }
-        //     </Navbar.Collapse>
-        // </Navbar>
+        <div className={classes.root}>
+            <AppBar position="static">
+                <Toolbar>
+                    { <Fragment>{ isAuthenticated ? authLinks : guestLinks }</Fragment> }
+                </Toolbar>
+            </AppBar>
+        </div>
     );
 };
 

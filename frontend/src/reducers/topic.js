@@ -63,9 +63,9 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
-    const { type, payload } = action;
+    // const { type, payload } = action;
 
-    switch (type) {
+    switch (action.type) {
         case FETCH_TOPIC_REQUEST:
             return {
                 ...topicInitialState,
@@ -82,19 +82,19 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 isLoading: false,
-                name: payload.name,
-                slug: payload.slug,
-                description: payload.description,
-                pinned: payload.topic.pinned,
-                creator: payload.topic.creator,
-                createdAt: payload.topic.created_at,
-                threads: payload.topic.threads,
+                name: action.name,
+                slug: action.slug,
+                description: action.description,
+                pinned: action.topic.pinned,
+                creator: action.topic.creator,
+                createdAt: action.topic.created_at,
+                threads: action.topic.threads,
                 error: null,
             };
         case FETCH_TOPIC_FAILURE:
             return {
                 ...state,
-                error: payload.error,
+                error: action.error,
             };
         case DELETE_TOPIC_REQUEST:
             return {
@@ -112,7 +112,7 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 isDeleting: false,
-                deleteError: payload.error,
+                deleteError: action.error,
             };
         // Do IS_OPEN
         case CREATE_TOPIC_REQUEST:
@@ -121,8 +121,8 @@ export default function (state = initialState, action) {
                 newTopicLoading: true,
                 newTopicSuccess: false,
                 newTopicError: null,
-                newTopicName: payload.newTopic.name,
-                newTopicDescription: payload.newTopic.description,
+                newTopicName: action.newTopic.name,
+                newTopicDescription: action.newTopic.description,
             };
         case CREATE_TOPIC_SUCCESS:
             return {
@@ -131,7 +131,7 @@ export default function (state = initialState, action) {
                 newTopicSuccess: true,
                 newTopicName: '',
                 newTopicDescription: '',
-                newTopicId: payload.newTopic.id,
+                newTopicId: action.newTopic.id,
                 newTopicShow: false,
                 newTopicError: null,
             };
@@ -142,7 +142,7 @@ export default function (state = initialState, action) {
                 newTopicSuccess: false,
                 newTopicId: null,
                 newTopicShow: true,
-                newTopicError: payload.error,
+                newTopicError: action.error,
             };
 
         case CREATE_THREAD_REQUEST:
@@ -178,20 +178,20 @@ export default function (state = initialState, action) {
         case DELETE_THREAD_REQUEST:
             return {
                 ...state,
-                deleteTopicList: [...state.deleteTopicList, payload.id],
+                deleteTopicList: [...state.deleteTopicList, action.id],
             };
         case DELETE_THREAD_SUCCESS:
         case DELETE_THREAD_FAILURE:
             return {
                 ...state,
-                deleteTopicList: state.deleteTopicList.filter(id => id !== payload.id),
+                deleteTopicList: state.deleteTopicList.filter(id => id !== action.id),
             };
 
         case CREATE_THREAD_SAVE:
             return {
                 ...state,
-                newTopicName: payload.name,
-                newTopicContent: payload.description,
+                newTopicName: action.name,
+                newTopicContent: action.description,
             };
         case CREATE_THREAD_TOGGLE:
             return {

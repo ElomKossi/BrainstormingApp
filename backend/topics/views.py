@@ -31,9 +31,7 @@ class TopicListAPIView(generics.ListAPIView):
 class TopicCreateAPIView(generics.CreateAPIView):
     serializer_class = TopicCreateSerializer
     queryset = Topic.objects.all()
-    #permission_classes = [IsAdminUser]
     permission_classes = [IsAuthenticated]
-    #permission_classes = [AllowAny]
     throttle_scope = 'create_topic'
 
 
