@@ -29,14 +29,14 @@ const threadInitialState = {
     error: null,
 };
 
-const newIdeaInitialState = {
-    newIdeaSuccess: false,
-    newIdeaLoading: false,
-    newIdeaError: null,
-};
-
-const deleteIdeaInitialState = {
-    deleteIdeaList: [],
+const newThreadInitialState = {
+    newThreadLoading: false,
+    newThreadSuccess: false,
+    newThreadName: '',
+    newThreadContent: '',
+    newThreadId: null,
+    newThreadError: null,
+    newThreadShow: false,
 };
 
 const deleteThreadInitialState = {
@@ -46,15 +46,12 @@ const deleteThreadInitialState = {
 
 const initialState = {
     ...threadInitialState,
-    ...newIdeaInitialState,
-    ...deleteIdeaInitialState,
+    ...newThreadInitialState,
     ...deleteThreadInitialState,
 };
 
 export default function (state = initialState, action) {
-    const { type, payload } = action;
-
-    switch (type) {
+    switch (action.type) {
         case FETCH_THREAD_REQUEST:
             return {
                 ...initialState,
@@ -65,20 +62,50 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 isLoading: false,
-                name: payload.thread.name,
-                content: payload.thread.content,
-                pinned: payload.thread.pinned,
-                is_open: payload.thread.is_open,
-                creator: payload.thread.creator,
-                createdAt: payload.thread.created_at,
-                ideas: payload.thread.ideas,
+                name: action.thread.name,
+                content: action.thread.content,
+                pinned: action.thread.pinned,
+                is_open: action.thread.is_open,
+                creator: action.thread.creator,
+                createdAt: action.thread.created_at,
+                ideas: action.thread.ideas,
                 error: null,
             };
         case FETCH_THREAD_FAILURE:
             return {
                 ...state,
                 isLoading: false,
-                error: payload.error,
+                error: action.error,
+            };
+
+        case CREATE_THREAD_REQUEST:
+            return {
+                ...state,
+                newThreadLoading: true,
+                newThreadSuccess: false,
+                newThreadError: null,
+                newThreadName: action.newThread.name,
+                newThreadContent: action.newThread.content,
+            };
+        case CREATE_THREAD_SUCCESS:
+            return {
+                ...state,
+                newThreadLoading: false,
+                newThreadSuccess: true,
+                newThreadName: '',
+                newThreadContent: '',
+                newThreadId: action.newThread.id,
+                newThreadShow: false,
+                newThreadError: null,
+            };
+        case CREATE_THREAD_FAILURE:
+            return {
+                ...state,
+                newThreadLoading: false,
+                newThreadSuccess: false,
+                newThreadId: null,
+                newThreadShow: true,
+                newThreadError: action.error,
             };
 
         case DELETE_THREAD_REQUEST:
@@ -97,7 +124,7 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 isDeleting: false,
-                deleteError: payload.error,
+                deleteError: action.error,
             };
 
         case CREATE_IDEA_REQUEST:
@@ -118,20 +145,20 @@ export default function (state = initialState, action) {
             return {
                 ...state,
                 newPostLoading: false,
-                newPostError: payload.error,
+                newPostError: action.error,
                 newPostSuccess: false,
             };
 
         case DELETE_IDEA_REQUEST:
             return {
                 ...state,
-                deletePostList: [...state.deletePostList, payload.id],
+                deletePostList: [...state.deletePostList, action.id],
             };
         case DELETE_IDEA_SUCCESS:
         case DELETE_IDEA_FAILURE:
             return {
                 ...state,
-                deletePostList: state.deletePostList.filter(id => id !== payload.id),
+                deletePostList: state.deletePostList.filter(id => id !== action.id),
             };
         default:
             return state;

@@ -32,7 +32,7 @@ const topicInitialState = {
     pinned: false,
     creator: null,
     create_at: null,
-    threads: [],
+    threads: null,
     error: null,
 };
 

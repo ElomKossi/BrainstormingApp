@@ -23,6 +23,8 @@ urlpatterns = [
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
 
+    path('user/', include('authentication.urls')),
+
     #brainstorming urls
     path('topic/', include('topics.urls')),
     path('thread/', include('threads.urls')),

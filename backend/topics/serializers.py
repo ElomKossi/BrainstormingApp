@@ -3,6 +3,7 @@ from rest_framework import serializers
 from django.utils.timezone import now
 from datetime import datetime
 from django.contrib.humanize.templatetags.humanize import naturaltime
+from django.template.defaultfilters import slugify
 
 from djoser.serializers import UserSerializer
 
@@ -31,20 +32,23 @@ class TopicListSerializer(serializers.ModelSerializer):
     ideas_count = serializers.SerializerMethodField()
     threads_count = serializers.SerializerMethodField()
     last_activity = serializers.SerializerMethodField()
-    members = MemberSerializer()
-
+    creator = serializers.HyperlinkedRelatedField(
+        read_only=True,
+        view_name='user-detail',
+        lookup_field='username'
+    )
     class Meta:
         model = Topic
         fields = (
             'slug',
             'name',
             'description',
+            'creator',
             'ideas_count',
             'threads_count',
             'last_activity',
-            'members'
         )
-        read_only_fields = ('slug',)
+        #read_only_fields = ('slug',)
 
     def get_ideas_count(self, obj):
         return Idea.objects.filter(thread__topic=obj).count()
@@ -93,25 +97,28 @@ class TopicCreateSerializer(serializers.ModelSerializer):
             'created_at',
             'last_activity',
         )
-        read_only_fields = ('id', 'pinned', 'creator', 'created_at', 'last_activity')
-        lookup_field = 'slug'
+        read_only_fields = ('id', 'slug', 'pinned', 'creator', 'created_at', 'last_activity')
+        # lookup_field = 'slug'
 
     def create(self, validated_data):
         name = validated_data['name']
         description = validated_data['description']
 
         # Get the requesting user
+        # user = self.request.user
         user = None
         request = self.context.get("request")
         if request and hasattr(request, "user"):
             user = request.user
         else:
-            raise serializers.ValidationError('Must be authenticated to create thread')
+            raise serializers.ValidationError('Must be authenticated to create topic')
 
+        slug = slugify(name)
         # Create the topic
         topic = Topic(
             name=name,
             description=description,
+            slug = slug,
             creator=user
         )
         topic.save()
@@ -155,6 +162,7 @@ class TopicDetailSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'threads',
+            'ideas',
             'creator'
         )
         read_only_fields = ('slug',)

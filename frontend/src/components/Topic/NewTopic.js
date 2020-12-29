@@ -27,14 +27,6 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 const NewTopic = (props) => {
-    // constructor(props) {
-    //     super(props);
-    //     const {name, description} = this.props;
-    //     this.state = {
-    //       name,
-    //       description,
-    //     };
-    // }
 
     const [formData, setFormData] = useState({
         name: "",
@@ -91,15 +83,16 @@ const NewTopic = (props) => {
         return name;
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         //const {name, description} = this.state;
         const { createTopic } = props;
         let newTopic = {
           name: name,
           description: description,
         };
+        //const newTopic = JSON.stringify({ name, description })
         console.log(newTopic)
-        //newTopic = JSON.stringify({ name, description })
         createTopic(newTopic);
     };
 
@@ -134,7 +127,7 @@ const NewTopic = (props) => {
                 <CssBaseline />
                 <div className={classes.paper}>
                     {/* onSubmit={e => onSubmit(e), props.onCloseModal} */}
-                    <form className={classes.form} onSubmit={handleSubmit} noValidate>
+                    <form className={classes.form} onSubmit={e => handleSubmit(e)} noValidate>
 
                         <TextField
                         variant="outlined"

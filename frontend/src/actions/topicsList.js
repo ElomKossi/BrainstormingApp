@@ -25,7 +25,7 @@ export const fetchTopicsList = () => async dispatch =>  {
 
             dispatch({
                 type: FETCH_TOPICS_SUCCESS,
-                payload: res.data
+                topics: res.data
             })
         } catch (err) {
             dispatch({

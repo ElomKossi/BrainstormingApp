@@ -29,8 +29,8 @@ class TopicListAPIView(generics.ListAPIView):
 
 
 class TopicCreateAPIView(generics.CreateAPIView):
-    serializer_class = TopicCreateSerializer
     queryset = Topic.objects.all()
+    serializer_class = TopicCreateSerializer
     permission_classes = [IsAuthenticated]
     throttle_scope = 'create_topic'
 
@@ -39,7 +39,6 @@ class TopicDetailAPIView(generics.RetrieveAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicDetailSerializer
     permission_classes = [AllowAny]
-    lookup_field = 'slug'
 
 
 class TopicDeleteAPIView(generics.DestroyAPIView):

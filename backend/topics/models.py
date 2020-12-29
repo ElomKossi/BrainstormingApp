@@ -15,7 +15,6 @@ class Topic(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     last_activity = models.DateTimeField(default=now)
     creator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='topics')
-    members = models.ManyToManyField(UserAccount)
 
     class Meta:
         ordering = [
@@ -26,8 +25,8 @@ class Topic(models.Model):
     def __str__(self):
         return self.slug
 
-    def save(self, *args, **kwargs):
-        if not self.id:
-            # Newly created object, so set slug
-            self.slug = slugify(self.name)
-        super(Topic, self).save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     if not self.id:
+    #         # Newly created object, so set slug
+    #         self.slug = slugify(self.name)
+    #     super(Topic, self).save(*args, **kwargs)

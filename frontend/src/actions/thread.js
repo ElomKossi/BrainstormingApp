@@ -6,8 +6,6 @@ import {
     CREATE_THREAD_REQUEST,
     CREATE_THREAD_SUCCESS,
     CREATE_THREAD_FAILURE,
-    CREATE_THREAD_SAVE,
-    CREATE_THREAD_TOGGLE,
     DELETE_THREAD_REQUEST,
     DELETE_THREAD_SUCCESS,
     DELETE_THREAD_FAILURE,
@@ -15,21 +13,18 @@ import {
     USER_LOADED_FAIL,
 } from './types';
 
+import { THREAD_URL, THREAD_CREATE_URL, THREAD_DELETE_URL } from './constants';
+
+import { authHeader } from '../utils/config';
+
 export const fetchThread = () => async dispatch => {
     if (localStorage.getItem('access')) {
-        const config = {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
-
         try {
             dispatch({
                 type: FETCH_THREAD_REQUEST
             })
 
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/thread/`, config);
+            const res = await axios.get(THREAD_URL, {headers: authHeader()});
 
             dispatch({
                 type: FETCH_THREAD_SUCCESS,
@@ -47,29 +42,24 @@ export const fetchThread = () => async dispatch => {
     }
 };
 
-export const createThread = (newThread) => async dispatch => {
+export const createThread = (newThread) =>  dispatch => {
     if (localStorage.getItem('access')) {
-        const config = {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
+        dispatch({
+            type: CREATE_THREAD_REQUEST,
+            newThread
+        })
 
         try {
-            dispatch({
-                type: CREATE_THREAD_REQUEST
-            })
-
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}/thread/create/`, newThread, config);
+            const res = await axios.post(THREAD_CREATE_URL, newThread, {headers: authHeader()});
 
             dispatch({
                 type: CREATE_THREAD_SUCCESS,
-                payload: res.data
+                payload: res
             })
-        } catch (err) {
+        } catch (error) {
             dispatch({
-                type: CREATE_THREAD_FAILURE
+                type: CREATE_THREAD_FAILURE,
+                error
             });
         }
     } else {
@@ -79,35 +69,13 @@ export const createThread = (newThread) => async dispatch => {
     }
 };
 
-export const createThreadSave = newThread => {
-    return {
-      type: CREATE_THREAD_SAVE,
-      name: newThread.name,
-      content: newThread.content,
-    };
-};
-
-export const createThreadToggle = () => {
-    return {
-      type: CREATE_THREAD_TOGGLE,
-    };
-};
-
-export const deleteThread = () => async dispatch => {
+export const deleteThread = (idThread) => async dispatch => {
     if (localStorage.getItem('access')) {
-        const config = {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        };
-
+        dispatch({
+            type: DELETE_THREAD_REQUEST
+        })
         try {
-            dispatch({
-                type: DELETE_THREAD_REQUEST
-            })
-            url = '/thread/' + idTopic + '/delete/'
-            const res = await axios.delete(`${process.env.REACT_APP_API_URL}` + url, newTopic, config);
+            const res = await axios.delete(THREAD_URL + idThread + THREAD_DELETE_URL, {headers: authHeader()});
 
             dispatch({
                 type: DELETE_THREAD_SUCCESS,

@@ -1,10 +1,8 @@
-import React, {  Fragment, useState } from "react";
+import React, {  Fragment, useState, useEffect } from "react";
 import {connect} from "react-redux";
 import TopicList from "../../components/Topic/TopicList";
 import NewTopic from "../../components/Topic/NewTopic";
 import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Container from "@material-ui/core/Container";
 import { makeStyles } from "@material-ui/core/styles";
 
 import Dialog from "@material-ui/core/Dialog";
@@ -33,10 +31,19 @@ const useStyles = makeStyles((theme) => ({
 const Topic = (props) => {
     //const {topic} = this.props.match.params;
 
-    props.fetchTopicsList();
-    // useEffect(() => {
-    //   props.fetchTopicsList();
-    // });
+    // props.fetchTopicsList();
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          await props.fetchTopicsList();
+        } catch (err) {
+
+        }
+      }
+
+      fetchData();
+      // eslint-disable-next-line
+    }, []);
 
   // componentWillReceiveProps(newProps) {
   //   const {topic: oldTopic} = this.props.match.params;
@@ -100,15 +107,12 @@ const Topic = (props) => {
       )
 
       return (
-        <Container component="main" maxWidth="xs">
-          <CssBaseline />
-          <div className={classes.paper}>
+          <div className={classes.root}>
             <Button variant="contained" color="primary" onClick={handleClickOpen}>
-              ADD TOPICS
+              ADD TOPIC
             </Button>
             { openModal }
-
-            <NewTopic
+          {/*<NewTopic
               //onCloseModal={handleClose}
               isAuthenticated={isAuthenticated}
               success={newTopicSuccess}
@@ -120,20 +124,16 @@ const Topic = (props) => {
               createTopic={createTopic}
               updateNewTopic={createTopicSave}
               toggleShowEditor={createTopicToggle}
-            />
+            /> */}
             <TopicList topics = {topics} />
           </div>
-        </Container>
       )
     }
 
     return(
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
+        <div className={classes.root}>
           <TopicList {...props} />
         </div>
-      </Container>
     );
 }
 

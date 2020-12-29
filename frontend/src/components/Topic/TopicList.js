@@ -17,25 +17,11 @@ import CardContent from '@material-ui/core/CardContent';
 const useStyles = makeStyles((theme) => ({
     root: {
         flexGrow: 1,
-        width: '100%',
-        maxWidth: 360,
-        backgroundColor: theme.palette.background.paper,
     },
     paper: {
         padding: theme.spacing(2),
         textAlign: 'center',
         color: theme.palette.text.secondary,
-    },
-    bullet: {
-        display: 'inline-block',
-        margin: '0 2px',
-        transform: 'scale(0.8)',
-    },
-    title: {
-        fontSize: 14,
-    },
-    pos: {
-        marginBottom: 12,
     },
 }));
 
@@ -104,52 +90,36 @@ const TopicList = (props) => {
             );
         }
 
-        // if (data.error)
-        //     return (
-        //         <Card className={classes.root}>
-        //             <CardContent>
-        //                 <Typography className={classes.title} color="textSecondary" gutterBottom>
-        //                 Word of the Day
-        //                 </Typography>
-        //                 <Typography variant="h5" component="h2">
-        //                 be{bull}nev{bull}o{bull}lent
-        //                 </Typography>
-        //                 <Typography className={classes.pos} color="textSecondary">
-        //                 adjective
-        //                 </Typography>
-        //                 <Typography variant="body2" component="p">
-        //                 well meaning and kindly.
-        //                 <br />
-        //                 {'"a benevolent smile"'}
-        //                 </Typography>
-        //             </CardContent>
-        //             <CardActions>
-        //                 <Button size="small">Learn More</Button>
-        //             </CardActions>
-        //         </Card>
-        //     );
-
         return (
-            <Fragment>
-                <Grid item xs={12} key={slug}>
+            <Fragment key={slug}>
+                <Grid item xs={12} >
                     <Paper className={classes.paper}>
                         <Grid container spacing={2}>
                             <Grid item xs={5} sm container>
-                                <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-                                    <Grid container direction="row" alignItems="center" wrap="nowrap">
-                                        <ForumIcon />
-                                        <Link to={`/topic/${slug}`}>{name}</Link>
-                                    </Grid>
-                                </Typography>
-                                <Typography gutterBottom variant="body2">
-                                    {description}
-                                </Typography>
-                                <Typography gutterBottom variant="body2" color="textSecondary">
-                                    <PersonIcon /> {creator.username}
-                                </Typography>
+                                <Grid item xs={12}>
+                                    <Typography gutterBottom variant="subtitle1" component="h2" align="center">
+                                        <Grid container direction="row" alignItems="center" wrap="nowrap">
+                                            <ForumIcon />
+                                            <Link to={`/topic/${slug}`}>{name}</Link>
+                                        </Grid>
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12} container direction="row" alignItems="center" wrap="nowrap">
+                                    <Typography gutterBottom variant="body2">
+                                        {description}
+                                    </Typography>
+                                </Grid>
+                                <Grid item xs={12}>
+                                    <Typography gutterBottom variant="subtitle1" component="h2" align="center">
+                                        <Grid container direction="row" alignItems="center" wrap="nowrap">
+                                            <PersonIcon />
+                                            {creator}
+                                        </Grid>
+                                    </Typography>
+                                </Grid>
                             </Grid>
                             <Grid item xs={2} sm container>
-                                <Grid item xs={12} sm container>
+                                <Grid item xs={12}>
                                     <Typography gutterBottom variant="subtitle2" component="h2" align="center">
                                         <Grid container direction="row" alignItems="center" wrap="nowrap">
                                             <ChatIcon />
@@ -158,7 +128,7 @@ const TopicList = (props) => {
                                         </Grid>
                                     </Typography>
                                 </Grid>
-                                <Grid item xs={12} sm container>
+                                <Grid item xs={12}>
                                     <Typography gutterBottom variant="subtitle2" component="h2" align="center">
                                         <Grid container direction="row" alignItems="center" wrap="nowrap">
                                             <SmsIcon />

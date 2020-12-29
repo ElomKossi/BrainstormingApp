@@ -10,9 +10,9 @@ const initialState = {
 };
 
 export default function (state = initialState, action) {
-    const { type, payload } = action;
+    //const { type, payload } = action;
 
-    switch (type) {
+    switch (action.type) {
         case FETCH_TOPICS_REQUEST:
             return {
                 ...state,
@@ -20,13 +20,13 @@ export default function (state = initialState, action) {
             };
         case FETCH_TOPICS_SUCCESS:
             return {
-                forums: payload.topics,
+                topics: action.topics,
                 error: null,
             };
         case FETCH_TOPICS_FAILURE:
             return {
                 ...state,
-                error: payload.error,
+                error: action.error,
             };
         default:
             return state

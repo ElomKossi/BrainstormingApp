@@ -10,9 +10,6 @@ import {
     DELETE_TOPIC_SUCCESS,
     DELETE_TOPIC_FAILURE,
 
-    // CREATE_TOPIC_SAVE,
-    // CREATE_TOPIC_TOGGLE,
-
     EDIT_TOPIC_REQUEST,
 
     USER_LOADED_FAIL,
@@ -20,23 +17,18 @@ import {
 
 import { TOPIC_URL, TOPIC_CREATE_URL, TOPIC_DELETE_URL } from './constants';
 
-import {getConfig} from '../utils/config';
+import { authHeader } from '../utils/config';
 
 export const fetchTopic = () => async dispatch =>  {
     if (localStorage.getItem('access')) {
         // eslint-disable-next-line
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
 
         try {
             dispatch({
                 type: FETCH_TOPIC_REQUEST
             })
 
-            const res = await axios.get(TOPIC_URL, getConfig());
+            const res = await axios.get(TOPIC_URL, {headers: authHeader()});
 
             dispatch({
                 type: FETCH_TOPIC_SUCCESS,
@@ -54,27 +46,15 @@ export const fetchTopic = () => async dispatch =>  {
     }
 };
 
-export const createTopic = (newTopic) => async dispatch =>  {
+export const createTopic = (newTopic) => dispatch =>  {
     if (localStorage.getItem('access')) {
-    // eslint-disable-next-line
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
-
-        const body = JSON.stringify({ newTopic });
-        console.log("lien", TOPIC_CREATE_URL)
-        console.log(newTopic)
-        console.log(body)
-
         dispatch({
             type: CREATE_TOPIC_REQUEST,
             newTopic
         })
 
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API_URL}topic/create/`, newTopic, getConfig());
+            const res = axios.post(TOPIC_CREATE_URL, newTopic, {headers: authHeader()});
 
             dispatch({
                 type: CREATE_TOPIC_SUCCESS,
@@ -96,18 +76,13 @@ export const createTopic = (newTopic) => async dispatch =>  {
 export const deleteTopic = (idTopic) => async dispatch =>  {
     if (localStorage.getItem('access')) {
         // eslint-disable-next-line
-        const config = {
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
 
         try {
             dispatch({
                 type: DELETE_TOPIC_REQUEST
             })
 
-            const res = await axios.delete(TOPIC_URL + idTopic + TOPIC_DELETE_URL, getConfig());
+            const res = await axios.delete(TOPIC_URL + idTopic + TOPIC_DELETE_URL, {headers: authHeader()});
 
             dispatch({
                 type: DELETE_TOPIC_SUCCESS,

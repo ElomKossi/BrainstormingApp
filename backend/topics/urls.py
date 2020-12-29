@@ -13,7 +13,7 @@ from .views import (
 urlpatterns = [
     path('', TopicListAPIView.as_view(), name='topic-list'),
     path('create/', TopicCreateAPIView.as_view(), name='topic-create'),
-    path('<slug:slug>/', TopicDetailAPIView.as_view(), name='topic-detail'),
+    path('<slug:pk>/', TopicDetailAPIView.as_view(), name='topic-detail'),
     path('<slug:slug>/edit/', TopicUpdateAPIView.as_view(), name='topic-update'),
     path('<slug:slug>/delete/', TopicDeleteAPIView.as_view(), name='topic-delete'),
 ]
