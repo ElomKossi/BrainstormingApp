@@ -7,6 +7,7 @@ import Activate from './containers/Activate';
 import ResetPassword from './containers/ResetPassword';
 import ResetPasswordConfirm from './containers/ResetPasswordConfirm';
 import Topic from './containers/Topic/Topic'
+import Thread from './containers/Thread/Thread'
 
 import { Provider } from 'react-redux';
 import store from './store';
@@ -26,6 +27,7 @@ const App = () => (
                     <Route exact path='/activate/:uid/:token' component={Activate} />
 
                     <Route exact path='/topic' component={Topic} />
+                    <Route exact path='/topic/:topic' component={Thread} />
                 </Switch>
             </Layout>
         </Router>

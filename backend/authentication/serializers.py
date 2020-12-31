@@ -13,7 +13,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         many=True,
         read_only=True,
         view_name='topic-detail',
-        lookup_field='pk'
+        lookup_field='slug'
     )
     threads = serializers.HyperlinkedRelatedField(
         many=True,

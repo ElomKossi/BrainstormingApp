@@ -39,6 +39,7 @@ class TopicDetailAPIView(generics.RetrieveAPIView):
     queryset = Topic.objects.all()
     serializer_class = TopicDetailSerializer
     permission_classes = [AllowAny]
+    lookup_field = 'slug'
 
 
 class TopicDeleteAPIView(generics.DestroyAPIView):

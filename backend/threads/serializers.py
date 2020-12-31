@@ -12,7 +12,6 @@ from ideas.models import Idea
 class ThreadListSerializer(serializers.ModelSerializer):
     topic = serializers.HyperlinkedRelatedField(read_only=True, view_name='topic-detail', lookup_field='slug')
     creator = serializers.HyperlinkedRelatedField(read_only=True, view_name='user-detail', lookup_field='username')
-
     class Meta:
         model = Thread
         fields = (

@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import './style.css';
 
 import { makeStyles } from '@material-ui/core/styles';
 import Paper from '@material-ui/core/Paper';
@@ -37,7 +36,7 @@ const TopicList = (props) => {
                 <Card className={classes.root}>
                     <CardContent>
                         <Typography variant="h5" component="h2">
-                            There is no TOPIC
+                            There is no TOPICS
                         </Typography>
                     </CardContent>
                 </Card>

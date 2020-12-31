@@ -3,22 +3,16 @@ import {
     FETCH_THREAD_SUCCESS,
     FETCH_THREAD_FAILURE,
 
+    CREATE_THREAD_REQUEST,
+    CREATE_THREAD_SUCCESS,
+    CREATE_THREAD_FAILURE,
+
     DELETE_THREAD_REQUEST,
     DELETE_THREAD_SUCCESS,
     DELETE_THREAD_FAILURE,
-
-    CREATE_IDEA_REQUEST,
-    CREATE_IDEA_SUCCESS,
-    CREATE_IDEA_FAILURE,
-
-    DELETE_IDEA_REQUEST,
-    DELETE_IDEA_SUCCESS,
-    DELETE_IDEA_FAILURE,
-
 } from '../actions/types';
 
 const threadInitialState = {
-    isLoading: false,
     name: null,
     content: null,
     pinned: false,
@@ -55,13 +49,11 @@ export default function (state = initialState, action) {
         case FETCH_THREAD_REQUEST:
             return {
                 ...initialState,
-                isLoading: true,
                 error: null,
             };
         case FETCH_THREAD_SUCCESS:
             return {
                 ...state,
-                isLoading: false,
                 name: action.thread.name,
                 content: action.thread.content,
                 pinned: action.thread.pinned,
@@ -125,40 +117,6 @@ export default function (state = initialState, action) {
                 ...state,
                 isDeleting: false,
                 deleteError: action.error,
-            };
-
-        case CREATE_IDEA_REQUEST:
-            return {
-                ...state,
-                newPostLoading: true,
-                newPostError: null,
-                newPostSuccess: false,
-            };
-        case CREATE_IDEA_SUCCESS:
-            return {
-                ...state,
-                newPostLoading: false,
-                newPostError: null,
-                newPostSuccess: true,
-            };
-        case CREATE_IDEA_FAILURE:
-            return {
-                ...state,
-                newPostLoading: false,
-                newPostError: action.error,
-                newPostSuccess: false,
-            };
-
-        case DELETE_IDEA_REQUEST:
-            return {
-                ...state,
-                deletePostList: [...state.deletePostList, action.id],
-            };
-        case DELETE_IDEA_SUCCESS:
-        case DELETE_IDEA_FAILURE:
-            return {
-                ...state,
-                deletePostList: state.deletePostList.filter(id => id !== action.id),
             };
         default:
             return state;

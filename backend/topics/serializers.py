@@ -129,7 +129,7 @@ class TopicUpdateSerializer(serializers.ModelSerializer):
     name = serializers.CharField(max_length=50, allow_blank=False)
     description = serializers.CharField(default='')
     pinned = serializers.BooleanField(default=False)
-
+    is_open = serializers.BooleanField(default=False)
     class Meta:
         model = Topic
         fields = (
@@ -137,6 +137,7 @@ class TopicUpdateSerializer(serializers.ModelSerializer):
             'description'
             'slug',
             'pinned',
+            'is_open',
             'creator',
             'created_at',
             'last_activity'
@@ -153,20 +154,57 @@ class TopicUpdateSerializer(serializers.ModelSerializer):
         return instance
 
 
+class CreatorSerializer(serializers.ModelSerializer):
+    # first_name = serializers.CharField(max_length=255, unique=True, db_index=True)
+    # last_name = serializers.CharField(max_length=255, unique=True, db_index=True)
+    class Meta:
+        model = UserAccount
+        fields = [
+            'first_name',
+            'last_name',
+            'username',
+            'is_staff'
+        ]
+
+
+class TopicThreadSerializer(serializers.ModelSerializer):
+    creator = CreatorSerializer(read_only=True)
+    created_at = serializers.SerializerMethodField()
+    class Meta:
+        model = Thread
+        fields = [
+            'id',
+            'name',
+            'content',
+            'created_at',
+            'creator'
+        ]
+    def get_created_at(self, obj):
+        return naturaltime(obj.created_at)
+
+
 class TopicDetailSerializer(serializers.ModelSerializer):
     threads = serializers.SerializerMethodField()
+    # threads = TopicThreadSerializer(many=True, read_only=True)
+    creator = CreatorSerializer(read_only=True)
+    created_at = serializers.SerializerMethodField()
     class Meta:
         model = Topic
         fields = (
             'slug',
             'name',
             'description',
+            'pinned',
+            'is_open',
+            'created_at',
+            'creator',
             'threads',
-            'ideas',
-            'creator'
         )
         read_only_fields = ('slug',)
         lookup_field = 'slug'
+
+    def get_created_at(self, obj):
+        return naturaltime(obj.created_at)
 
     def get_threads(self, obj):
         def get_last_activity(thread):

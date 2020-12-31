@@ -1,6 +1,7 @@
 import React, { useEffect, Fragment } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import Content from '../containers/Content'
 import { connect } from 'react-redux';
 import { checkAuthenticated, load_user } from '../actions/auth';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -33,10 +34,8 @@ const Layout = (props) => {
     return (
         <Fragment>
             <CssBaseline />
-            <Container maxWidth="lg">
-                <Header />
-                {props.children}
-            </Container>
+            <Header />
+            {props.children}
             <Footer />
         </Fragment>
     );

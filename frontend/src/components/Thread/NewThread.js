@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 
-import Container from "@material-ui/core/Container";
 import CssBaseline from "@material-ui/core/CssBaseline";
+import Container from "@material-ui/core/Container";
+import Grid from '@material-ui/core/Grid';
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
-import Typography from "@material-ui/core/Typography";
-import Card from "@material-ui/core/Card";
-import CardContent from "@material-ui/core/CardContent";
-import Grid from '@material-ui/core/Grid';
-import { makeStyles } from "@material-ui/core/styles";
 
-import { fetchTopicsList } from '../../actions/topicsList'
+import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -28,7 +24,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const NewTopic = (props) => {
+const NewThread = (props) => {
 
     const classes = useStyles();
 
@@ -38,33 +34,10 @@ const NewTopic = (props) => {
 
     const [formData, setFormData] = useState({
         name: "",
-        description: ""
+        content: ""
     });
 
-    const { name, description } = formData;
-
-    // eslint-disable-next-line
-    const onSave = () => {
-        // save to redux store (uncontrolled input way)
-        //const {name, description} = this.state;
-        props.updateNewThread({
-          name: name,
-          description: description,
-        });
-    };
-
-    // eslint-disable-next-line
-    const onCancel = () => {
-        // reset & clear everything
-        setFormData({
-          name: "",
-          description: "",
-        });
-        props.updateNewThread({
-          name: "",
-          description: "",
-        });
-    };
+    const { name, content } = formData;
 
     const onChange = (e) => {
         setFormData({
@@ -73,50 +46,26 @@ const NewTopic = (props) => {
         });
     }
 
-    // eslint-disable-next-line
-    const isFormValid = () => {
-        const {name} = this.state;
-        return name;
-    };
-
     const handleSubmit = (e) => {
         e.preventDefault();
-        //const {name, description} = this.state;
-        const { createTopic } = props;
-        let newTopic = {
-          name: name,
-          description: description,
+
+        const {topic,  createThread } = props;
+
+        let newThread = {
+            topic: topic,
+            name: name,
+            content: content,
         };
-        createTopic(newTopic);
+
+        createThread(newThread);
         props.onCloseModal();
-        fetchTopicsList();
+
     };
 
-    // eslint-disable-next-line
-    const isValidLength = descriptionState => {
-        const maxLength = this.props.maxLength || 100;
-        return descriptionState.getPlainText("").length <= maxLength;
-    };
-
-    if (!isAuthenticated) {
-        return (
-            <div className={classes.root}>
-                <Card className={classes.root}>
-                    <CardContent>
-                        <Typography variant="h5" component="h2">
-                            There is no TOPIC
-                        </Typography>
-                    </CardContent>
-                </Card>
-            </div>
-        );
-    }
-
-    return(
+    return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
             <div className={classes.paper}>
-                {/* onSubmit={e => onSubmit(e), props.onCloseModal} */}
                 <form className={classes.form} onSubmit={e => handleSubmit(e)} noValidate>
                     <TextField
                     variant="outlined"
@@ -137,11 +86,11 @@ const NewTopic = (props) => {
                     fullWidth
                     multiline
                     rows={4}
-                    id="description"
-                    label="Description"
-                    name="description"
-                    autoComplete="description"
-                    value={description}
+                    id="content"
+                    label="Content"
+                    name="content"
+                    autoComplete="content"
+                    value={content}
                     onChange={e => onChange(e)}/>
 
                     <Grid container spacing={3}>
@@ -173,4 +122,4 @@ const NewTopic = (props) => {
 
 }
 
-export default (NewTopic);
+export default (NewThread);
