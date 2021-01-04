@@ -75,16 +75,17 @@ const TopicList = (props) => {
 
             lastActivity = (
                 <Fragment>
-                    <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-                        <Grid container direction="row" alignItems="center" wrap="nowrap">
-                            {pinned ? <PinDropIcon /> : <ChatIcon /> }
-                            <Link to={`/thread/${thread_id}`}>{thread_name}</Link>
-                        </Grid>
-                    </Typography>
-                    <Typography gutterBottom variant="body2">
-                        <PersonIcon /> {username}
-                        <b>{`  —  ${naturaltime}`}</b>
-                    </Typography>
+                    <Grid container direction="row" alignItems="center" wrap="nowrap">
+                        <Typography gutterBottom variant="subtitle1" component="h2" align="center">
+                            <Grid container direction="row" alignItems="center" wrap="nowrap">
+                                {pinned ? <PinDropIcon /> : <ChatIcon /> }
+                                <Link to={`/thread/${thread_id}`}>{thread_name}</Link>
+                            </Grid>
+                        </Typography>
+                    </Grid>
+                    <Grid container direction="row" alignItems="center" wrap="nowrap">
+                        <PersonIcon /> {username} <b>{`  —  ${naturaltime}`}</b>
+                    </Grid>
                 </Fragment>
             );
         }
@@ -112,7 +113,7 @@ const TopicList = (props) => {
                                     <Typography gutterBottom variant="subtitle1" component="h2" align="center">
                                         <Grid container direction="row" alignItems="center" wrap="nowrap">
                                             <PersonIcon />
-                                            {creator}
+                                            {creator.substring(creator.indexOf('user/')+5, creator.length-1)}
                                         </Grid>
                                     </Typography>
                                 </Grid>

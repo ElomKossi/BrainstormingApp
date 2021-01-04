@@ -74,7 +74,6 @@ const Thread = (props) => {
 
   const [open, setOpen] = useState(false);
 
-
   const handleClickOpen = () => {
     setOpen(true);
   };

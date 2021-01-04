@@ -77,7 +77,7 @@ const ThreadList = (props) => {
         return (
             <Fragment key={id}>
                 <Grid item xs={12} >
-                    <Paper className={classes.paper}>
+                    <Card className={classes.paper}>
                         <Grid container spacing={2}>
                             <Grid item xs={5} sm container>
                                 <Grid item xs={12}>
@@ -118,7 +118,7 @@ const ThreadList = (props) => {
                                 {lastActivity}
                             </Grid>
                         </Grid>
-                    </Paper>
+                    </Card>
                 </Grid>
             </Fragment>
         );

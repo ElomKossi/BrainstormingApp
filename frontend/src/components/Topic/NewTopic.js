@@ -10,7 +10,7 @@ import CardContent from "@material-ui/core/CardContent";
 import Grid from '@material-ui/core/Grid';
 import { makeStyles } from "@material-ui/core/styles";
 
-import { fetchTopicsList } from '../../actions/topicsList'
+import { fetchTopicsList } from '../../actions/topic'
 
 const useStyles = makeStyles((theme) => ({
     paper: {

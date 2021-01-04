@@ -14,8 +14,16 @@ class Thread(models.Model):
     is_open = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_activity = models.DateTimeField(default=now)
-    topic = models.ForeignKey(Topic, on_delete=models.CASCADE, related_name='threads')
-    creator = models.ForeignKey(UserAccount, on_delete=models.CASCADE, related_name='threads')
+    topic = models.ForeignKey(
+        Topic,
+        on_delete=models.CASCADE,
+        related_name='threads'
+    )
+    creator = models.ForeignKey(
+        UserAccount,
+        on_delete=models.CASCADE,
+        related_name='threads'
+    )
 
     class Meta:
         ordering = [

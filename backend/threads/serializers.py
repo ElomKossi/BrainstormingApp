@@ -109,20 +109,17 @@ class ThreadDeleteSerializer(serializers.ModelSerializer):
 
 
 class CreatorSerializer(serializers.ModelSerializer):
-    first_name = serializers.CharField(source='profile.first_name')
-    last_name = serializers.CharField(source='profile.last_name')
-    username = serializers.CharField(source='profile.username')
     class Meta:
         model = UserAccount
         fields = [
+            'username',
             'first_name',
             'last_name',
-            'username'
             'is_staff'
         ]
 
 
-class ThreadPostSerializer(serializers.ModelSerializer):
+class ThreadIdeaSerializer(serializers.ModelSerializer):
     creator = CreatorSerializer(read_only=True)
     created_at = serializers.SerializerMethodField()
     class Meta:
@@ -138,9 +135,13 @@ class ThreadPostSerializer(serializers.ModelSerializer):
 
 
 class ThreadDetailSerializer(serializers.ModelSerializer):
-    topic = serializers.HyperlinkedRelatedField(read_only=True, view_name='topic-detail', lookup_field='slug')
+    topic = serializers.HyperlinkedRelatedField(
+        read_only=True,
+        view_name='topic-detail',
+        lookup_field='slug'
+    )
     creator = CreatorSerializer(read_only=True)
-    posts = ThreadPostSerializer(many=True, read_only=True)
+    ideas = ThreadIdeaSerializer(many=True, read_only=True)
     created_at = serializers.SerializerMethodField()
 
     class Meta:
@@ -154,7 +155,7 @@ class ThreadDetailSerializer(serializers.ModelSerializer):
             'creator',
             'created_at',
             'last_activity',
-            'posts'
+            'ideas'
         )
         read_only_fields = ('id',)
 

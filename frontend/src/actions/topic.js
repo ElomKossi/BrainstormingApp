@@ -23,7 +23,30 @@ import { TOPIC_URL, TOPIC_CREATE_URL, TOPIC_DELETE_URL } from './constants';
 
 import { authHeader } from '../utils/config';
 
-import { fetchTopicsList } from './topicsList'
+export const fetchTopicsList = () => async dispatch =>  {
+    if (localStorage.getItem('access')) {
+        try {
+            dispatch({
+                type: FETCH_TOPICS_REQUEST
+            })
+
+            const res = await axios.get(TOPIC_URL,  { headers: authHeader() });
+
+            dispatch({
+                type: FETCH_TOPICS_SUCCESS,
+                topics: res.data
+            })
+        } catch (err) {
+            dispatch({
+                type: FETCH_TOPICS_FAILURE
+            });
+        }
+    } else {
+        dispatch({
+            type: USER_LOADED_FAIL
+        });
+    }
+};
 
 export const fetchTopic = (topic) => async dispatch => {
     if (localStorage.getItem('access')) {
@@ -76,7 +99,7 @@ export const createTopic = (newTopic) => dispatch => {
                     dispatch({
                         type: FETCH_TOPICS_REQUEST
                     })
-                    axios.get(`${process.env.REACT_APP_API_URL}topic/`, { headers: authHeader() })
+                    axios.get(TOPIC_URL, { headers: authHeader() })
                         .then(response => {
                             dispatch({
                                 type: FETCH_TOPICS_SUCCESS,
@@ -112,11 +135,27 @@ export const deleteTopic = (idTopic) => async dispatch => {
             })
 
             const res = await axios.delete(TOPIC_URL + idTopic + TOPIC_DELETE_URL, { headers: authHeader() });
-            const result = res.data
+
             dispatch({
                 type: DELETE_TOPIC_SUCCESS,
-                result
             })
+
+            // re-Load Topics
+            dispatch({
+                type: FETCH_TOPICS_REQUEST
+            })
+            axios.get(`${process.env.REACT_APP_API_URL}topic/`, { headers: authHeader() })
+                .then(response => {
+                    dispatch({
+                        type: FETCH_TOPICS_SUCCESS,
+                        topics: response.data
+                    });
+                })
+                .catch(error => {
+                    dispatch({
+                        type: FETCH_TOPICS_FAILURE
+                    });
+                });
         } catch (err) {
             dispatch({
                 type: DELETE_TOPIC_FAILURE

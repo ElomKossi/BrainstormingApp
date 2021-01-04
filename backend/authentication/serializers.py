@@ -3,6 +3,8 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 User = get_user_model()
 
+from authentication.models import UserAccount
+
 class UserCreate(UserCreateSerializer):
     class Meta(UserCreateSerializer.Meta):
         model = User
@@ -28,7 +30,7 @@ class UserDetailSerializer(serializers.ModelSerializer):
         lookup_field='pk'
     )
     class Meta:
-        model = User
+        model = UserAccount
         fields = [
             'first_name',
             'last_name',

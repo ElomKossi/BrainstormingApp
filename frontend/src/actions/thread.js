@@ -26,19 +26,19 @@ import { THREAD_URL, THREAD_CREATE_URL, THREAD_DELETE_URL, TOPIC_URL } from './c
 
 import { authHeader } from '../utils/config';
 
-export const fetchThread = (thread) => async dispatch => {
+export const fetchThread = (thread_id) => async dispatch => {
     if (localStorage.getItem('access')) {
         try {
             dispatch({
                 type: FETCH_THREAD_REQUEST
             })
 
-            const res = axios.get(THREAD_URL + thread, {headers: authHeader()});
-
-            const result = res.data
+            const res = await axios.get(THREAD_URL + thread_id + '/', {headers: authHeader()});
+            console.log(res)
+            const thread = res.data
             dispatch({
                 type: FETCH_THREAD_SUCCESS,
-                result
+                thread
             })
         } catch (err) {
             dispatch({
@@ -90,16 +90,6 @@ export const createThread = (newThread) =>  dispatch => {
                         });
                     });
             });
-            const result = res.data
-            console.log(result)
-            console.log({result})
-            console.log(res)
-            dispatch({
-                type: CREATE_THREAD_SUCCESS,
-                result
-            })
-
-            // fetchTopic(newThread.topic)
         } catch (error) {
             dispatch({
                 type: CREATE_THREAD_FAILURE,
@@ -120,11 +110,29 @@ export const deleteThread = (idThread) => async dispatch => {
         })
         try {
             const res = axios.delete(THREAD_URL + idThread + THREAD_DELETE_URL, {headers: authHeader()});
-            const result = res.data
+
             dispatch({
-                type: DELETE_THREAD_SUCCESS,
-                result
+                type: DELETE_THREAD_SUCCESS
             })
+
+            // re-Load Thread page
+            dispatch({
+                type: FETCH_THREAD_REQUEST
+            })
+            axios.get(THREAD_URL + idThread + '/', { headers: authHeader() })
+                .then(response => {
+                    const result = response.data
+                    dispatch({
+                        type: FETCH_THREAD_SUCCESS,
+                        result
+                    });
+                })
+                .catch(error => {
+                    dispatch({
+                        type: FETCH_THREAD_FAILURE,
+                        error
+                    });
+                });
         } catch (err) {
             dispatch({
                 type: DELETE_THREAD_FAILURE

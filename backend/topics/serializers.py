@@ -155,8 +155,6 @@ class TopicUpdateSerializer(serializers.ModelSerializer):
 
 
 class CreatorSerializer(serializers.ModelSerializer):
-    # first_name = serializers.CharField(max_length=255, unique=True, db_index=True)
-    # last_name = serializers.CharField(max_length=255, unique=True, db_index=True)
     class Meta:
         model = UserAccount
         fields = [

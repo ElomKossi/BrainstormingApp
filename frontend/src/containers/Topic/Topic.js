@@ -10,8 +10,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import { fetchTopic, createTopic } from "../../actions/topic";
-import { fetchTopicsList } from "../../actions/topicsList";
+import { fetchTopicsList, fetchTopic, createTopic } from "../../actions/topic";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
