@@ -9,6 +9,7 @@ import ResetPasswordConfirm from './containers/ResetPasswordConfirm';
 import Topic from './containers/Topic/Topic'
 import Thread from './containers/Thread/Thread'
 import Idea from './containers/Idea/Idea'
+import Dashboard from './containers/Dashboard/Dashboard';
 
 import { Provider } from 'react-redux';
 import store from './store';
@@ -30,6 +31,8 @@ const App = () => (
                     <Route exact path='/topic' component={Topic} />
                     <Route exact path='/topic/:topic' component={Thread} />
                     <Route exact path='/thread/:thread' component={Idea} />
+
+                    <Route exact path='/dashboard/:username' component={Dashboard} />
                 </Switch>
             </Layout>
         </Router>

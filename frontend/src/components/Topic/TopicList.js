@@ -1,17 +1,28 @@
-import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
+import React, { Fragment, useState } from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import PropTypes from 'prop-types';
 
 import { makeStyles } from '@material-ui/core/styles';
-import Paper from '@material-ui/core/Paper';
 import Grid from '@material-ui/core/Grid';
-import ForumIcon from '@material-ui/icons/Forum';
-import ChatIcon from '@material-ui/icons/Chat';
-import SmsIcon from '@material-ui/icons/Sms';
-import PinDropIcon from '@material-ui/icons/PinDrop';
-import PersonIcon from '@material-ui/icons/Person';
 import Typography from "@material-ui/core/Typography";
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
+import CardActions from '@material-ui/core/CardActions';
+
+import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import Avatar from '@material-ui/core/Avatar';
+import IconButton from '@material-ui/core/IconButton';
+import ExpandLess from '@material-ui/icons/ExpandLess';
+import ExpandMore from '@material-ui/icons/ExpandMore';
+import Collapse from '@material-ui/core/Collapse';
+import Chip from '@material-ui/core/Chip';
+
+import StatusMessage from '../StatusMessage/StatusMessage'
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -22,13 +33,104 @@ const useStyles = makeStyles((theme) => ({
         textAlign: 'center',
         color: theme.palette.text.secondary,
     },
+    list: {
+      width: '100%',
+      maxWidth: 650,
+      backgroundColor: theme.palette.background.paper,
+    },
+    nested: {
+      paddingLeft: theme.spacing(4),
+    },
+    cardRoot: {
+        minWidth: 275,
+    },
+    pos: {
+      marginBottom: 12,
+    },
+    chip: {
+      display: 'flex',
+      justifyContent: 'center',
+      flexWrap: 'wrap',
+      '& > *': {
+        margin: theme.spacing(0.5),
+      },
+    },
 }));
+
+function ListItemLink(props) {
+    const classes = useStyles();
+    const { primary, secondary, nbThreads, nbIdeas, to, description, creator } = props;
+
+    const renderLink = React.useMemo(
+        () => React.forwardRef((itemProps, ref) => <RouterLink to={to} ref={ref} {...itemProps} />),
+        [to],
+    );
+
+    const [open, setOpen] = useState(false);
+    const handleClick = () => {
+        setOpen(!open);
+    };
+
+    return (
+        <Fragment>
+            <ListItem button component={renderLink}>
+                <ListItemAvatar>
+                    <Avatar>
+                        {creator.toUpperCase()}
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText primary={primary} secondary={secondary} />
+                <ListItemSecondaryAction className={classes.chip}>
+                    <IconButton edge="end" aria-label="delete" onClick={handleClick}>
+                        {open ? <ExpandLess /> : <ExpandMore />}
+                    </IconButton>
+                </ListItemSecondaryAction>
+            </ListItem>
+            <Collapse in={open} timeout="auto" unmountOnExit>
+            <div className={classes.cardRoot}>
+                <Card className={classes.cardRoot}>
+                    <CardContent>
+                        <Typography variant="h6" component="p" color="textSecondary">
+                            {description}
+                        </Typography>
+                    </CardContent>
+                    <CardActions>
+                        <IconButton edge="end" aria-label="delete">
+                            <Chip
+                                avatar={<Avatar>{nbThreads} </Avatar>}
+                                label={nbThreads > 1 ? ' Threads' : ' Thread'}
+                                color="primary"
+                                size="small"
+                                variant="outlined"
+                            />
+                        </IconButton>
+                        <IconButton edge="end" aria-label="delete">
+                            <Chip
+                                avatar={<Avatar>{nbIdeas} </Avatar>}
+                                label={nbThreads > 1 ? ' Ideas' : ' Idea'}
+                                color="secondary"
+                                size="small"
+                                variant="outlined"
+                            />
+                        </IconButton>
+                    </CardActions>
+                </Card>
+            </div>
+            </Collapse>
+            <Divider />
+        </Fragment>
+    );
+}
+
+ListItemLink.propTypes = {
+    to: PropTypes.string.isRequired,
+};
 
 const TopicList = (props) => {
 
     const classes = useStyles();
 
-    const { topics } = props;
+    const { isLoading, error, topics } = props;
 
     if (!topics || topics.length === 0) {
         return (
@@ -44,6 +146,17 @@ const TopicList = (props) => {
         );
     }
 
+    if (error || isLoading ) {
+        return (
+          <StatusMessage
+            error={error || !topics}
+            errorMessage={error}
+            loading={isLoading}
+            loadingMessage={'We are fetching the list of topics for you'}
+          />
+        );
+    }
+
     const topicList = topics.map(topic => {
         let {
             name,
@@ -51,12 +164,13 @@ const TopicList = (props) => {
             description,
             ideas_count,
             threads_count,
+            created_at,
             creator,
             last_activity,
         } = topic;
 
         let lastActivity = (
-            <div className="home-text home-vertical">{'—  No activity —'}</div>
+            '—  No activity —'
         );
 
         if (last_activity) {
@@ -75,75 +189,21 @@ const TopicList = (props) => {
 
             lastActivity = (
                 <Fragment>
-                    <Grid container direction="row" alignItems="center" wrap="nowrap">
-                        <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-                            <Grid container direction="row" alignItems="center" wrap="nowrap">
-                                {pinned ? <PinDropIcon /> : <ChatIcon /> }
-                                <Link to={`/thread/${thread_id}`}>{thread_name}</Link>
-                            </Grid>
-                        </Typography>
-                    </Grid>
-                    <Grid container direction="row" alignItems="center" wrap="nowrap">
-                        <PersonIcon /> {username} <b>{`  —  ${naturaltime}`}</b>
-                    </Grid>
+                    {`${username} post in ${thread_name}`}
                 </Fragment>
             );
         }
 
         return (
             <Fragment key={slug}>
-                <Grid item xs={12} >
-                    <Paper className={classes.paper}>
-                        <Grid container spacing={2}>
-                            <Grid item xs={5} sm container>
-                                <Grid item xs={12}>
-                                    <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-                                        <Grid container direction="row" alignItems="center" wrap="nowrap">
-                                            <ForumIcon />
-                                            <Link to={`/topic/${slug}`}>{name}</Link>
-                                        </Grid>
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12} container direction="row" alignItems="center" wrap="nowrap">
-                                    <Typography gutterBottom variant="body2">
-                                        {description}
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-                                        <Grid container direction="row" alignItems="center" wrap="nowrap">
-                                            <PersonIcon />
-                                            {creator.substring(creator.indexOf('user/')+5, creator.length-1)}
-                                        </Grid>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid item xs={2} sm container>
-                                <Grid item xs={12}>
-                                    <Typography gutterBottom variant="subtitle2" component="h2" align="center">
-                                        <Grid container direction="row" alignItems="center" wrap="nowrap">
-                                            <ChatIcon />
-                                            {threads_count}
-                                            {threads_count > 1 ? ' threads' : ' thread'}
-                                        </Grid>
-                                    </Typography>
-                                </Grid>
-                                <Grid item xs={12}>
-                                    <Typography gutterBottom variant="subtitle2" component="h2" align="center">
-                                        <Grid container direction="row" alignItems="center" wrap="nowrap">
-                                            <SmsIcon />
-                                            {ideas_count}
-                                            {ideas_count > 1 ? ' ideas' : ' idea'}
-                                        </Grid>
-                                    </Typography>
-                                </Grid>
-                            </Grid>
-                            <Grid item xs={5} sm container>
-                                {lastActivity}
-                            </Grid>
-                        </Grid>
-                    </Paper>
-                </Grid>
+                <ListItemLink
+                    to={`/topic/${slug}`}
+                    primary={<b>{`${name}`}</b>}
+                    secondary={lastActivity}
+                    nbThreads={threads_count}
+                    nbIdeas={ideas_count}
+                    creator={creator.slice(0, -1).split('user/')[1].substr(0, 1)}
+                    description={description}/>
             </Fragment>
         );
     });
@@ -151,293 +211,12 @@ const TopicList = (props) => {
     return (
         <div className={classes.root}>
             <Grid container spacing={3}>
-                { topicList }
+                <List className={classes.root}>
+                    { topicList }
+                </List>
             </Grid>
         </div>
     );
 }
 
 export default TopicList;
-
-
-// const TopicList =({ data }) => {
-// //class TopicList extends Component {
-
-//     const classes = useStyles();
-
-//     const bull = <span className={classes.bullet}>•</span>;
-
-//     if (data.topics != null && data.error != null) {
-//         const topicList = data.topics.map(topic => {
-//             let {
-//                 name,
-//                 slug,
-//                 description,
-//                 ideas_count,
-//                 threads_count,
-//                 creator,
-//                 last_activity,
-//             } = topic;
-
-//             let lastActivity = (
-//                 <div className="home-text home-vertical">{'—  No activity —'}</div>
-//             );
-
-//             if (last_activity) {
-//                 let {
-//                     thread_id,
-//                     thread_name,
-//                     username,
-//                     pinned,
-//                     naturaltime,
-//                 } = last_activity;
-
-//                 thread_name =
-//                     thread_name.length > 43
-//                     ? thread_name.substring(0, 43) + '...'
-//                     : thread_name;
-
-//                 lastActivity = (
-//                     <Fragment>
-//                         <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-//                             <Grid container direction="row" alignItems="center" wrap="nowrap">
-//                                 {pinned ? <PinDropIcon /> : <ChatIcon /> }
-//                                 <Link to={`/thread/${thread_id}`}>{thread_name}</Link>
-//                             </Grid>
-//                         </Typography>
-//                         <Typography gutterBottom variant="body2">
-//                             <PersonIcon /> {username}
-//                             <b>{`  —  ${naturaltime}`}</b>
-//                         </Typography>
-//                     </Fragment>
-//                 );
-//             }
-
-//             if (data.error)
-//                 return (
-//                     <Card className={classes.root}>
-//                         <CardContent>
-//                             <Typography className={classes.title} color="textSecondary" gutterBottom>
-//                             Word of the Day
-//                             </Typography>
-//                             <Typography variant="h5" component="h2">
-//                             be{bull}nev{bull}o{bull}lent
-//                             </Typography>
-//                             <Typography className={classes.pos} color="textSecondary">
-//                             adjective
-//                             </Typography>
-//                             <Typography variant="body2" component="p">
-//                             well meaning and kindly.
-//                             <br />
-//                             {'"a benevolent smile"'}
-//                             </Typography>
-//                         </CardContent>
-//                         <CardActions>
-//                             <Button size="small">Learn More</Button>
-//                         </CardActions>
-//                     </Card>
-//                 );
-
-//             return (
-//                 <Fragment>
-//                     <Grid item xs={12} key={slug}>
-//                         <Paper className={classes.paper}>
-//                             <Grid container spacing={2}>
-//                                 <Grid item xs={5} sm container>
-//                                     <Typography gutterBottom variant="subtitle1" component="h2" align="center">
-//                                         <Grid container direction="row" alignItems="center" wrap="nowrap">
-//                                             <TopicIcon />
-//                                             <Link to={`/topic/${slug}`}>{name}</Link>
-//                                         </Grid>
-//                                     </Typography>
-//                                     <Typography gutterBottom variant="body2">
-//                                         {description}
-//                                     </Typography>
-//                                     <Typography gutterBottom variant="body2" color="textSecondary">
-//                                         <PersonIcon /> {creator.username}
-//                                     </Typography>
-//                                 </Grid>
-//                                 <Grid item xs={2} sm container>
-//                                     <Grid item xs={12} sm container>
-//                                         <Typography gutterBottom variant="subtitle2" component="h2" align="center">
-//                                             <Grid container direction="row" alignItems="center" wrap="nowrap">
-//                                                 <ChatIcon />
-//                                                 {threads_count}
-//                                                 {threads_count > 1 ? ' threads' : ' thread'}
-//                                             </Grid>
-//                                         </Typography>
-//                                     </Grid>
-//                                     <Grid item xs={12} sm container>
-//                                         <Typography gutterBottom variant="subtitle2" component="h2" align="center">
-//                                             <Grid container direction="row" alignItems="center" wrap="nowrap">
-//                                                 <SmsIcon />
-//                                                 {ideas_count}
-//                                                 {ideas_count > 1 ? ' ideas' : ' idea'}
-//                                             </Grid>
-//                                         </Typography>
-//                                     </Grid>
-//                                 </Grid>
-//                                 <Grid item xs={5} sm container>
-//                                     {lastActivity}
-//                                 </Grid>
-//                             </Grid>
-//                         </Paper>
-//                     </Grid>
-//                 </Fragment>
-//             );
-//         });
-
-//         return (
-//             <div className={classes.root}>
-//                 <Grid container spacing={3}>
-//                     { topicList }
-//                 </Grid>
-//             </div>
-//         );
-//     }
-
-//     return (
-//         <div className={classes.root}>
-//             <Card className={classes.root}>
-//                 <CardContent>
-//                     <Typography variant="h5" component="h2">
-//                         There is no TOPIC
-//                     </Typography>
-//                 </CardContent>
-//             </Card>
-//         </div>
-//     );
-
-// }
-
-// const mapStateToProps = state => ({
-//     // topics: state.topic,
-//     // error: state.topic.error
-//     // userData: state.auth.user
-// });
-
-// export default connect(mapStateToProps, {  })(TopicList);
-
-// eslint-disable-next-line
-{/* <ListGroup.Item key={ id }>
-    <Container textAlign="left" padded="horizontally">
-        <Row>
-            <Col lg={5}>
-                <Row>
-                    <Icon.PencilSquare />
-                    <Link to={`/topic/${slug}`}>{name}</Link>
-                </Row>
-                <Row>
-                    {description}
-                </Row>
-            </Col>
-            <Col lg={2}>
-                <div className="home-column home-stats home-vertical">
-                    <div style={{paddingBottom: '5px'}}>
-                        <Icon.ListTask />
-                        {threads_count}
-                        {threads_count > 1 ? ' threads' : ' thread'}
-                    </div>
-                    <div>
-                        <Icon.ChatDots />
-                        {ideas_count}
-                        {ideas_count > 1 ? ' ideas' : ' idea'}
-                    </div>
-                </div>
-            </Col>
-            <Col lg={5}>
-                {lastActivity}
-            </Col>
-        </Row>
-    </Container>
-</ListGroup.Item> */}
-
-// <div className="topicContainer">
-//     <Card>
-//         <ListGroup variant="flush">
-//         { topicList }
-//         </ListGroup>
-//     </Card>
-//     {/* <Segment.Group className="topic-list">{topicList}</Segment.Group> */}
-// </div>
-
-// const topicList = topics.map(topic => {
-//     let {
-//       name,
-//       slug,
-//       description,
-//       ideas_count,
-//       threads_count,
-//       creator,
-//       last_activity,
-//     } = topic;
-
-//     name = name.length > 57 ? name.substring(0, 55) + '...' : name;
-
-//     let lastActivity = last_activity ? (
-//         <div className="topic-row">
-//             <div className="topic-column">
-//                 <div className="topic-name">{last_activity.name}</div>
-//                 <div className="topic-meta">
-//                 <Link to={`/user/${last_activity.username}`}>
-//                     <Icon.PersonCircle />
-//                     {last_activity.username}
-//                 </Link>
-//                 <b>{`  —  ${last_activity.naturaltime}`}</b>
-//                 </div>
-//             </div>
-//         </div>
-//     ) : (
-//         <div className="topic-text topic-vertical">{'—  No activity —'}</div>
-//     );
-
-//     return (
-//         <ListGroup.Item key={ id }>
-//             <Container textAlign="left" padded="horizontally">
-//                 <Row>
-//                     <Col lg={5}>
-//                         <div className="topic-row">
-//                             <div className="topic-column">
-//                                 <div>
-//                                     {pinned ? <Icon.BookmarkCheckFill /> : <Icon.BookmarkDash /> }
-//                                     {/* <Icon name={pinned ? 'pin' : 'talk outline'} /> */}
-//                                     <Link to={`/thread/${id}`}>{name}</Link>
-//                                     </div>
-//                                     <div className="topic-meta">
-//                                     <Link to={`/user/${creator}`}>
-//                                         <Icon.PersonCircle />
-//                                         {creator}
-//                                     </Link>
-//                                     <b>{`  —  ${naturaltime}`}</b>
-//                                 </div>
-//                             </div>
-//                         </div>
-//                     </Col>
-//                     <Col lg={2}>
-//                         <div className="topic-column topic-stats topic-vertical">
-//                             <div style={{paddingBottom: '5px'}}>
-//                                 <Icon.ListTask />
-//                                 {threads_count}
-//                                 {threads_count > 1 ? ' threads' : ' thread'}
-//                             </div>
-//                         </div>
-//                     </Col>
-//                     <Col lg={5}>
-//                         {lastActivity}
-//                     </Col>
-//                 </Row>
-//             </Container>
-//         </ListGroup.Item>
-//     );
-// });
-
-// return (
-//     <div className="topicContainer">
-//         <Card>
-//             <ListGroup variant="flush">
-//             { topicList }
-//             </ListGroup>
-//         </Card>
-//         {/* <Segment.Group className="topic-list">{topicList}</Segment.Group> */}
-//     </div>
-// );

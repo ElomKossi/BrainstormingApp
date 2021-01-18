@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
 import {
@@ -14,11 +14,7 @@ import NewThread from "../../components/Thread/NewThread"
 import ThreadList from "../../components/Thread/ThreadList"
 
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Container from '@material-ui/core/Container';
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -54,12 +50,15 @@ const Thread = (props) => {
   }, []);
 
   const {
+    isLoading,
     isAuthenticated,
 
     name,
     slug,
     description,
     threads,
+    creator,
+    created_at,
     error,
 
     newThreadSuccess,
@@ -68,31 +67,16 @@ const Thread = (props) => {
     newThreadId,
     newThreadError,
     createThread,
+    newThreadShow,
     createThreadSave,
     createThreadToggle,
   } = props;
 
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const openModal = (
-    <Fragment>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add Topic</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-                  </DialogContentText>
+  if (isAuthenticated) {
+    return (
+      <Container maxWidth="lg">
+        <div className={classes.root}>
           <NewThread
-            onCloseModal={handleClose}
             topic={slug}
             isAuthenticated={isAuthenticated}
             success={newThreadSuccess}
@@ -100,61 +84,66 @@ const Thread = (props) => {
             content={newThreadContent}
             id={newThreadId}
             error={newThreadError}
+            showEditor={newThreadShow}
             createThread={createThread}
             updateNewThread={createThreadSave}
             toggleShowEditor={createThreadToggle}
+            maxLength={2000}
+            />
+          <ThreadList
+            isAuthenticated={isAuthenticated}
+            isLoading={isLoading}
+            name={name}
+            slug={slug}
+            description={description}
+            threads={threads}
+            creator={creator}
+            created_at={created_at}
+            error={error}
           />
-        </DialogContent>
-      </Dialog>
-    </Fragment>
-  )
-
-  if (isAuthenticated) {
-    return (
-      <div className={classes.root}>
-        <Button variant="contained" color="primary" onClick={handleClickOpen}>
-          ADD THREAD
-            </Button>
-        { openModal}
-        <ThreadList
-          name={name}
-          slug={slug}
-          description={description}
-          threads={threads}
-          error={error} />
-      </div>
+        </div>
+      </Container>
     )
   }
 
   return (
-    <div className={classes.root}>
-      <ThreadList
-        name={name}
-        slug={slug}
-        description={description}
-        threads={threads}
-        error={error} />
-    </div>
+    <Container maxWidth="lg">
+      <div className={classes.root}>
+          <ThreadList
+            isLoading={isLoading}
+            name={name}
+            slug={slug}
+            description={description}
+            threads={threads}
+            creator={creator}
+            created_at={created_at}
+            error={error}
+          />
+      </div>
+    </Container>
   );
 
 }
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
+  isLoading: state.topic.isLoading,
 
   name: state.topic.name,
   slug: state.topic.slug,
   description: state.topic.description,
+  creator: state.topic.creator,
+  created_at: state.topic.created_at,
   threads: state.topic.threads,
   error: state.topic.error,
 
-  newThreadLoading: state.topic.newThreadLoading,
-  newThreadSuccess: state.topic.newThreadSuccess,
-  newThreadName: state.topic.newThreadName,
-  newThreadContent: state.topic.newThreadContent,
-  newThreadId: state.topic.newThreadId,
-  newThreadError: state.topic.newThreadError,
-  newThreadShow: state.topic.newThreadShow,
+  newThreadLoading: state.thread.newThreadLoading,
+  newThreadSuccess: state.thread.newThreadSuccess,
+  newThreadName: state.thread.newThreadName,
+  newThreadContent: state.thread.newThreadContent,
+  newThreadId: state.thread.newThreadId,
+  newThreadError: state.thread.newThreadError,
+  newThreadShow: state.thread.newThreadShow,
 });
 
 const mapDispatchToProps = dispatch => ({

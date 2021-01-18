@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 
 import {
@@ -10,8 +10,9 @@ import { fetchThread, deleteThread } from "../../actions/thread";
 
 import NewIdea from "../../components/Idea/NewIdea"
 import IdeaList from "../../components/Idea/IdeaList"
-
+import StatusMessage from '../../components/StatusMessage/StatusMessage'
 import { makeStyles } from "@material-ui/core/styles";
+import Container from '@material-ui/core/Container';
 
 const useStyles = makeStyles((theme) => ({
     paper: {
@@ -49,15 +50,13 @@ const Idea = (props) => {
     const {thread: threadID} = props.match.params;
     const {
         isAuthenticated,
-        authenticatedUsername,
-        authenticatedIsStaff,
-
+        isLoading,
         id,
         name,
         content,
         pinned,
         creator,
-        createdAt,
+        created_at,
         ideas,
         error,
         createIdea,
@@ -66,46 +65,90 @@ const Idea = (props) => {
         deleteIdeaList,
         deleteIdea,
         deleteThread,
+        isDeleting,
+        deleteError,
+
+        username,
     } = props;
 
+
+    if (error || deleteError || isLoading || isDeleting || !name) {
+        let loadingMessage = 'We are fetching the thread for you';
+        if (isDeleting) {
+          loadingMessage = 'We are deleting the thread for you';
+        }
+        return (
+          <StatusMessage
+            error={error || deleteError || !name} // because a thread name cannot be empty
+            errorMessage={error || deleteError}
+            loading={isLoading || isDeleting}
+            loadingMessage={loadingMessage}
+            nothing={!name}
+            nothingMessage={'Thread does not exist'}
+          />
+        );
+    }
+
+    if (isAuthenticated) {
+        return (
+            <Container maxWidth="lg">
+                <div className={classes.root}>
+                    <IdeaList
+                        isAuthenticated={isAuthenticated}
+                        id={threadID}
+                        name={name}
+                        content={content}
+                        pinned={pinned}
+                        creator={creator}
+                        created_at={created_at}
+                        ideas={ideas}
+                        error={error}
+                        deleteIdeaList={deleteIdeaList}
+                        deleteIdea={deleteIdea}
+                        username={username}/>
+                    <NewIdea
+                        isAuthenticated={isAuthenticated}
+                        threadID={threadID}
+                        createIdea={createIdea}
+                        success={newIdeaSuccess}
+                        error={newIdeaError}
+                        maxLength={2000}/>
+                </div>
+            </Container>
+        );
+    }
+
     return (
-        <div className={classes.root}>
-            <IdeaList
-                isAuthenticated={isAuthenticated}
-                authenticatedUsername={authenticatedUsername}
-                authenticatedIsStaff={authenticatedIsStaff}
-                id={threadID}
-                name={name}
-                content={content}
-                pinned={pinned}
-                creator={creator}
-                createdAt={createdAt}
-                ideas={ideas}
-                error={error}
-                deleteIdeaList={deleteIdeaList}
-                deleteIdea={deleteIdea}/>
-            <NewIdea
-                isAuthenticated={isAuthenticated}
-                threadID={threadID}
-                createIdea={createIdea}
-                success={newIdeaSuccess}
-                error={newIdeaError}
-                maxLength={2000}/>
-        </div>
+        <Container maxWidth="lg">
+            <div className={classes.root}>
+                <IdeaList
+                    isAuthenticated={isAuthenticated}
+                    id={threadID}
+                    name={name}
+                    content={content}
+                    pinned={pinned}
+                    creator={creator}
+                    created_at={created_at}
+                    ideas={ideas}
+                    error={error}
+                    deleteIdeaList={deleteIdeaList}
+                    deleteIdea={deleteIdea}/>
+            </div>
+        </Container>
     );
 
 }
 
 const mapStateToProps = state => ({
     isAuthenticated: state.auth.isAuthenticated,
-    authenticatedUsername: state.auth.username,
-    authenticatedIsStaff: state.auth.isStaff,
+    username: state.auth.user.username,
 
+    isLoading: state.thread.isLoading,
     name: state.thread.name,
     content: state.thread.content,
     pinned: state.thread.pinned,
     creator: state.thread.creator,
-    createdAt: state.thread.createdAt,
+    created_at: state.thread.create_at,
     ideas: state.thread.ideas,
     error: state.thread.error,
     newIdeasuccess: state.thread.newIdeasuccess,

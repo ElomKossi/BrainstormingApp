@@ -20,21 +20,24 @@ import {
     USER_LOADED_FAIL,
 } from './types';
 
-import { fetchTopic } from "./topic";
-
 import { THREAD_URL, THREAD_CREATE_URL, THREAD_DELETE_URL, TOPIC_URL } from './constants';
 
 import { authHeader } from '../utils/config';
 
 export const fetchThread = (thread_id) => async dispatch => {
     if (localStorage.getItem('access')) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
         try {
             dispatch({
                 type: FETCH_THREAD_REQUEST
             })
 
-            const res = await axios.get(THREAD_URL + thread_id + '/', {headers: authHeader()});
-            console.log(res)
+            const res = await axios.get(THREAD_URL + thread_id + '/', config);
             const thread = res.data
             dispatch({
                 type: FETCH_THREAD_SUCCESS,
@@ -61,7 +64,7 @@ export const createThread = (newThread) =>  dispatch => {
         })
 
         try {
-            const res = axios.post(THREAD_CREATE_URL, newThread, {headers: authHeader()})
+            axios.post(THREAD_CREATE_URL, newThread, {headers: authHeader()})
             .then(response => {
                 let newThread = response.data;
 
@@ -81,6 +84,8 @@ export const createThread = (newThread) =>  dispatch => {
                             name: response.data.name,
                             slug: response.data.slug,
                             description: response.data.description,
+                            creator: response.data.creator,
+                            create_at: response.data.create_at,
                             threads: response.data.threads,
                         });
                     })
@@ -109,7 +114,7 @@ export const deleteThread = (idThread) => async dispatch => {
             type: DELETE_THREAD_REQUEST
         })
         try {
-            const res = axios.delete(THREAD_URL + idThread + THREAD_DELETE_URL, {headers: authHeader()});
+            axios.delete(THREAD_URL + idThread + THREAD_DELETE_URL, {headers: authHeader()});
 
             dispatch({
                 type: DELETE_THREAD_SUCCESS

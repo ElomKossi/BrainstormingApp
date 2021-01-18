@@ -5,6 +5,7 @@ import {
 } from '../actions/types';
 
 const initialState = {
+    isLoading: false,
     topics: null,
     error: null,
 };
@@ -16,10 +17,12 @@ export default function (state = initialState, action) {
         case FETCH_TOPICS_REQUEST:
             return {
                 ...state,
+                isLoading: true,
                 error: null
             };
         case FETCH_TOPICS_SUCCESS:
             return {
+                isLoading: false,
                 topics: action.topics,
                 error: null,
             };

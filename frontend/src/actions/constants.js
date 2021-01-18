@@ -1,6 +1,8 @@
 
 export const API_URL = process.env.REACT_APP_API_URL;
 
+export const USER_URL = API_URL + 'user/';
+
 export const TOPIC_URL = API_URL + 'topic/';
 export const TOPIC_CREATE_URL = TOPIC_URL + 'create/';
 export const TOPIC_EDIT_URL = '/edit/';

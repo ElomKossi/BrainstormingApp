@@ -44,6 +44,7 @@ class TopicListSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'creator',
+            'created_at',
             'ideas_count',
             'threads_count',
             'last_activity',
@@ -231,6 +232,7 @@ class TopicDetailSerializer(serializers.ModelSerializer):
             return {
                 'id': thread.id,
                 'name': thread.name,
+                'content': thread.content,
                 'pinned': thread.pinned,
                 'creator': thread.creator.username,
                 'naturaltime': naturaltime(thread.created_at),

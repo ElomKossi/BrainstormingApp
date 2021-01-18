@@ -32,7 +32,8 @@ export const createIdea = newIdea => dispatch => {
         })
 
         try {
-            const res = axios.post(IDEA_CREATE_URL, newIdea, {headers: authHeader()})
+            console.log(newIdea)
+            axios.post(IDEA_CREATE_URL, newIdea, {headers: authHeader()})
                 .then(response => {
                     dispatch({
                         type: CREATE_IDEA_SUCCESS
@@ -42,12 +43,12 @@ export const createIdea = newIdea => dispatch => {
                     dispatch({
                         type: FETCH_THREAD_REQUEST
                     })
-                    axios.get(THREAD_URL + newIdea.thread + '/', { headers: authHeader() })
+                    axios.get(THREAD_URL + newIdea.thread_id + '/', { headers: authHeader() })
                         .then(response => {
-                            const result = response.data
+                            const thread = response.data
                             dispatch({
                                 type: FETCH_THREAD_SUCCESS,
-                                result
+                                thread
                             });
                         })
                         .catch(err => {

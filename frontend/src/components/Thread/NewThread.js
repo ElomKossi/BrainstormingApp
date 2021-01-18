@@ -1,14 +1,19 @@
 import React, { useState } from "react";
-
+import {Link} from 'react-router-dom';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import Container from "@material-ui/core/Container";
-import Grid from '@material-ui/core/Grid';
 import TextField from "@material-ui/core/TextField";
 import Button from "@material-ui/core/Button";
+import StatusMessage from '../StatusMessage/StatusMessage'
 
 import { makeStyles } from "@material-ui/core/styles";
 
 const useStyles = makeStyles((theme) => ({
+    root: {
+        '& > *': {
+          margin: theme.spacing(1),
+        },
+    },
     paper: {
       marginTop: theme.spacing(2),
       display: "flex",
@@ -22,6 +27,11 @@ const useStyles = makeStyles((theme) => ({
     submit: {
       margin: theme.spacing(3, 0, 2),
     },
+    button: {
+      '& > *': {
+        margin: theme.spacing(1),
+      },
+    },
 }));
 
 const NewThread = (props) => {
@@ -30,6 +40,11 @@ const NewThread = (props) => {
 
     const {
         isAuthenticated,
+        isLoading,
+        success,
+        id,
+        error,
+        showEditor,
     } = props;
 
     const [formData, setFormData] = useState({
@@ -38,6 +53,10 @@ const NewThread = (props) => {
     });
 
     const { name, content } = formData;
+
+    const toggleShowEditor = () => {
+        props.toggleShowEditor();
+    };
 
     const onChange = (e) => {
         setFormData({
@@ -62,11 +81,53 @@ const NewThread = (props) => {
 
     };
 
+    const onCancel = () => {
+        // reset & clear everything
+        setFormData({
+          name: '',
+          content: '',
+        });
+        props.updateNewThread({
+            name: '',
+            content: '',
+        });
+        toggleShowEditor();
+    };
+
+    const statusMessage = (
+      <StatusMessage
+        error={error}
+        errorMessage={error || 'Oops! Something went wrong.'}
+        success={success}
+        successMessage={
+          <Link to={`/thread/${id}`}>{'Successful on creating thread'}</Link>
+        }
+      />
+    );
+
+    if (!showEditor) {
+        return (
+          <div className={classes.button}>
+            {statusMessage} {/* this will only show the success message */}
+            <Button variant="contained" color="primary" onClick={toggleShowEditor}>
+                ADD THREAD
+            </Button>
+            <Button variant="contained" color="inherit" style={{float: 'right'}}>
+                DELETE THIS TOPIC
+            </Button>
+            <Button variant="contained" color="secondary" style={{float: 'right'}}>
+                CLOSE THIS TOPIC
+            </Button>
+          </div>
+        );
+    }
+
     return (
-        <Container component="main" maxWidth="xs">
+        <Container>
             <CssBaseline />
-            <div className={classes.paper}>
-                <form className={classes.form} onSubmit={e => handleSubmit(e)} noValidate>
+            <div className={classes.root}>
+                {statusMessage}
+                <form className={classes.form} loading={isLoading} onSubmit={e => handleSubmit(e)} noValidate>
                     <TextField
                     variant="outlined"
                     margin="normal"
@@ -93,28 +154,22 @@ const NewThread = (props) => {
                     value={content}
                     onChange={e => onChange(e)}/>
 
-                    <Grid container spacing={3}>
-                        <Grid item xs={6}>
-                            <Button
-                                type="submit"
-                                fullWidth
-                                variant="contained"
-                                color="primary"
-                                className={classes.submit}>
-                                ADD
-                            </Button>
-                        </Grid>
-                        <Grid item xs={6}>
-                            <Button
-                                type="button"
-                                fullWidth
-                                variant="contained"
-                                className={classes.submit}
-                                onClick={props.onCloseModal}>
-                                CANCEL
-                            </Button>
-                        </Grid>
-                    </Grid>
+                    <div className={classes.root}>
+                        <Button
+                            type="submit"
+                            variant="contained"
+                            color="primary">
+                            ADD
+                        </Button>
+                        <Button
+                            type="button"
+                            variant="contained"
+                            color="default"
+                            disabled={isLoading}
+                            onClick={onCancel}>
+                            CLEAR
+                        </Button>
+                    </div>
                 </form>
             </div>
         </Container>

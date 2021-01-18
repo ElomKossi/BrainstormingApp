@@ -6,6 +6,7 @@ import {
 
     USER_LOADED_FAIL,
 } from '../actions/types';
+import {apiErrorHandler} from '../utils/errorhandler';
 
 export const fetchTopicsList = () => async dispatch =>  {
     if (localStorage.getItem('access')) {
@@ -28,8 +29,10 @@ export const fetchTopicsList = () => async dispatch =>  {
                 topics: res.data
             })
         } catch (err) {
+            const error = apiErrorHandler(err)
             dispatch({
-                type: FETCH_TOPICS_FAILURE
+                type: FETCH_TOPICS_FAILURE,
+                error
             });
         }
     } else {

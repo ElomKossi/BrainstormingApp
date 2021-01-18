@@ -10,15 +10,19 @@ import {
     DELETE_THREAD_REQUEST,
     DELETE_THREAD_SUCCESS,
     DELETE_THREAD_FAILURE,
+
+    CREATE_THREAD_SAVE,
+    CREATE_THREAD_TOGGLE,
 } from '../actions/types';
 
 const threadInitialState = {
+    isLoading: false,
     name: null,
     content: null,
     pinned: false,
     is_open: true,
     creator: null,
-    createdt: null,
+    create_at: null,
     ideas: [],
     error: null,
 };
@@ -33,6 +37,12 @@ const newThreadInitialState = {
     newThreadShow: false,
 };
 
+const newIdeaInitialState = {
+    newIdeaSuccess: false,
+    newIdeaLoading: false,
+    newIdeaError: null,
+  };
+
 const deleteThreadInitialState = {
     isDeleting: false,
     deleteError: null,
@@ -42,24 +52,28 @@ const initialState = {
     ...threadInitialState,
     ...newThreadInitialState,
     ...deleteThreadInitialState,
+
+    ...newIdeaInitialState,
 };
 
 export default function (state = initialState, action) {
     switch (action.type) {
         case FETCH_THREAD_REQUEST:
             return {
-                ...initialState,
+                ...state,
+                isLoading: true,
                 error: null,
             };
         case FETCH_THREAD_SUCCESS:
             return {
                 ...state,
+                isLoading: false,
                 name: action.thread.name,
                 content: action.thread.content,
                 pinned: action.thread.pinned,
                 is_open: action.thread.is_open,
                 creator: action.thread.creator,
-                createdAt: action.thread.created_at,
+                create_at: action.thread.created_at,
                 ideas: action.thread.ideas,
                 error: null,
             };
@@ -117,6 +131,20 @@ export default function (state = initialState, action) {
                 ...state,
                 isDeleting: false,
                 deleteError: action.error,
+            };
+
+        case CREATE_THREAD_SAVE:
+            return {
+            ...state,
+            newThreadName: action.name,
+            newThreadContent: action.content,
+            };
+        case CREATE_THREAD_TOGGLE:
+            return {
+            ...state,
+            newThreadShow: !state.newThreadShow,
+            newThreadSuccess: false,
+            newThreadError: null,
             };
         default:
             return state;

@@ -10,6 +10,9 @@ import {
     DELETE_TOPIC_SUCCESS,
     DELETE_TOPIC_FAILURE,
 
+    CREATE_TOPIC_SAVE ,
+    CREATE_TOPIC_TOGGLE,
+
     FETCH_TOPICS_REQUEST,
     FETCH_TOPICS_SUCCESS,
     FETCH_TOPICS_FAILURE,
@@ -25,12 +28,19 @@ import { authHeader } from '../utils/config';
 
 export const fetchTopicsList = () => async dispatch =>  {
     if (localStorage.getItem('access')) {
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
+
         try {
             dispatch({
                 type: FETCH_TOPICS_REQUEST
             })
 
-            const res = await axios.get(TOPIC_URL,  { headers: authHeader() });
+            const res = await axios.get(TOPIC_URL,  config);
 
             dispatch({
                 type: FETCH_TOPICS_SUCCESS,
@@ -50,14 +60,19 @@ export const fetchTopicsList = () => async dispatch =>  {
 
 export const fetchTopic = (topic) => async dispatch => {
     if (localStorage.getItem('access')) {
-        // eslint-disable-next-line
+        const config = {
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+        };
 
         try {
             dispatch({
                 type: FETCH_TOPIC_REQUEST
             })
 
-            const res = await axios.get(TOPIC_URL + topic + '/', { headers: authHeader() });
+            const res = await axios.get(TOPIC_URL + topic + '/', config);
 
             dispatch({
                 type: FETCH_TOPIC_SUCCESS,
@@ -65,6 +80,8 @@ export const fetchTopic = (topic) => async dispatch => {
                 slug: res.data.slug,
                 description: res.data.description,
                 threads: res.data.threads,
+                creator: res.data.creator,
+                created_at: res.data.created_at,
             })
         } catch (err) {
             dispatch({
@@ -86,7 +103,7 @@ export const createTopic = (newTopic) => dispatch => {
         })
 
         try {
-            const res = axios.post(TOPIC_CREATE_URL, newTopic, { headers: authHeader() })
+            axios.post(TOPIC_CREATE_URL, newTopic, { headers: authHeader() })
                 .then(response => {
                     let newTopic = response.data;
 
@@ -134,7 +151,7 @@ export const deleteTopic = (idTopic) => async dispatch => {
                 type: DELETE_TOPIC_REQUEST
             })
 
-            const res = await axios.delete(TOPIC_URL + idTopic + TOPIC_DELETE_URL, { headers: authHeader() });
+            await axios.delete(TOPIC_URL + idTopic + TOPIC_DELETE_URL, { headers: authHeader() });
 
             dispatch({
                 type: DELETE_TOPIC_SUCCESS,
@@ -173,3 +190,17 @@ export const editTopic = (idTopic) => async dispatch => {
         type: EDIT_TOPIC_REQUEST
     })
 };
+
+export const createTopicSave = newTopic => {
+    return {
+      type: CREATE_TOPIC_SAVE,
+      name: newTopic.name,
+      content: newTopic.description,
+    };
+  };
+
+  export const createTopicToggle = () => {
+    return {
+      type: CREATE_TOPIC_TOGGLE,
+    };
+  };

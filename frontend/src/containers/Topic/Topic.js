@@ -1,16 +1,13 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import TopicList from "../../components/Topic/TopicList";
 import NewTopic from "../../components/Topic/NewTopic";
 
 import { makeStyles } from "@material-ui/core/styles";
-import Button from "@material-ui/core/Button";
-import Dialog from "@material-ui/core/Dialog";
-import DialogContent from "@material-ui/core/DialogContent";
-import DialogContentText from "@material-ui/core/DialogContentText";
-import DialogTitle from "@material-ui/core/DialogTitle";
+import Container from '@material-ui/core/Container';
+import Divider from '@material-ui/core/Divider';
 
-import { fetchTopicsList, fetchTopic, createTopic } from "../../actions/topic";
+import { fetchTopicsList, fetchTopic, createTopic, createTopicSave, createTopicToggle } from "../../actions/topic";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -50,75 +47,75 @@ const Topic = (props) => {
     newTopicName,
     newTopicDescription,
     newTopicId,
+    newTopicSlug,
     newTopicError,
+    newTopicLoading,
+    newTopicShow,
     createTopic,
     createTopicSave,
+    createTopicToggle,
+
     topics,
+    isLoading,
+    error,
   } = props;
 
-  const [open, setOpen] = useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
-  const openModal = (
-    <Fragment>
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
-        <DialogTitle id="form-dialog-title">Add Topic</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            To subscribe to this website, please enter your email address here. We will send updates
-            occasionally.
-          </DialogContentText>
+  if (isAuthenticated) {
+    return (
+      <Container maxWidth="lg">
+        <div className={classes.root}>
           <NewTopic
-            onCloseModal={handleClose}
             isAuthenticated={isAuthenticated}
+            isLoading={newTopicLoading}
             success={newTopicSuccess}
             name={newTopicName}
             description={newTopicDescription}
             id={newTopicId}
+            slug={newTopicSlug}
             error={newTopicError}
+            showEditor={newTopicShow}
             createTopic={createTopic}
-            updateNewTopic={createTopicSave} />
-        </DialogContent>
-      </Dialog>
-    </Fragment>
-  )
-
-  if (isAuthenticated) {
-    return (
-      <div className={classes.root}>
-        <Button variant="contained" color="primary" onClick={handleClickOpen}>
-          ADD TOPIC
-          </Button>
-        { openModal}
-        <TopicList topics={topics} />
-      </div>
+            updateNewTopic={createTopicSave}
+            toggleShowEditor={createTopicToggle}
+            maxLength={2000}
+          />
+          <Divider />
+          <TopicList
+            topics={topics}
+            isLoading={isLoading}
+            error={error}/>
+        </div>
+      </Container>
     )
   }
 
   return (
-    <div className={classes.root}>
-      <TopicList topics={topics} />
-    </div>
+    <Container maxWidth="lg">
+      <div className={classes.root}>
+        <TopicList
+          topics={topics}
+          isLoading={isLoading}
+          error={error}/>
+      </div>
+    </Container>
   );
 }
 
 const mapStateToProps = state => ({
   isAuthenticated: state.auth.isAuthenticated,
 
+  newTopicLoading: state.topic.newTopicLoading,
   newTopicSuccess: state.topic.newTopicSuccess,
   newTopicName: state.topic.newTopicName,
   newTopicDescription: state.topic.newTopicDescription,
   newTopicId: state.topic.newTopicId,
+  newTopicSlug: state.topic.newTopicSlug,
   newTopicError: state.topic.newTopicError,
+  newTopicShow: state.topic.newTopicShow,
 
   topics: state.topicsList.topics,
+  isLoading: state.topicsList.isLoading,
+  error: state.topicsList.error,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -131,12 +128,12 @@ const mapDispatchToProps = dispatch => ({
   createTopic: newTopic => {
     dispatch(createTopic(newTopic));
   },
-  // createTopicSave: newTopic => {
-  //   dispatch(createTopicSave(newTopic));
-  // },
-  // createTopicToggle: () => {
-  //   dispatch(createTopicToggle());
-  // },
+  createTopicSave: newTopic => {
+    dispatch(createTopicSave(newTopic));
+  },
+  createTopicToggle: () => {
+    dispatch(createTopicToggle());
+  },
 });
 
 export default connect(mapStateToProps, mapDispatchToProps,)(Topic);

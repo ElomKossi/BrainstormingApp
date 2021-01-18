@@ -1,8 +1,4 @@
 import {
-    FETCH_TOPICS_REQUEST,
-    FETCH_TOPICS_SUCCESS,
-    FETCH_TOPICS_FAILURE,
-
     FETCH_TOPIC_REQUEST,
     FETCH_TOPIC_SUCCESS,
     FETCH_TOPIC_FAILURE,
@@ -18,24 +14,43 @@ import {
     DELETE_THREAD_REQUEST,
     DELETE_THREAD_SUCCESS,
     DELETE_THREAD_FAILURE,
+
+    CREATE_TOPIC_SAVE,
+    CREATE_TOPIC_TOGGLE,
 } from '../actions/types';
 
 const topicInitialState = {
+    isLoading: false,
     name: null,
     slug: null,
     description: null,
+    creator: null,
+    created_at:null,
     is_open: false,
     threads: null,
     error: null,
 };
 
 const newTopicInitialState = {
+    newTopicLoading: false,
     newTopicSuccess: false,
     newTopicName: '',
     newTopicDescription: '',
     newTopicId: null,
+    newTopicSlug: null,
     newTopicError: null,
+    newTopicShow: false,
 };
+
+const newThreadInitialState = {
+    newThreadLoading: false,
+    newThreadSuccess: false,
+    newThreadName: '',
+    newThreadContent: '',
+    newThreadId: null,
+    newThreadError: null,
+    newThreadShow: false,
+  };
 
 const deleteThreadInitialState = {
     deleteThreadList: [],
@@ -51,6 +66,8 @@ const initialState = {
     ...newTopicInitialState,
     ...deleteThreadInitialState,
     ...deleteTopicInitialState,
+
+    ...newThreadInitialState,
 };
 
 export default function (state = initialState, action) {
@@ -60,18 +77,36 @@ export default function (state = initialState, action) {
         case FETCH_TOPIC_REQUEST:
             return {
                 ...state,
+                // newThreadLoading: false,
+                // newThreadSuccess: false,
+                // newThreadId: null,
+                // newThreadError: null,
+                // newTopicShow: false,
+                // isLoading: true,
+                // error: null,
+                newThreadLoading: false,
                 newThreadSuccess: false,
                 newThreadId: null,
                 newThreadError: null,
+                newThreadShow: false,
+                isLoading: true,
                 error: null,
             };
         case FETCH_TOPIC_SUCCESS:
             return {
                 ...state,
+                // name: action.name,
+                // slug: action.slug,
+                // description: action.description,
+                // threads: action.threads,
+                // error: null,
+                isLoading: false,
                 name: action.name,
                 slug: action.slug,
                 description: action.description,
                 threads: action.threads,
+                creator: action.creator,
+                created_at: action.created_at,
                 error: null,
             };
         case FETCH_TOPIC_FAILURE:
@@ -101,6 +136,11 @@ export default function (state = initialState, action) {
         case CREATE_TOPIC_REQUEST:
             return {
                 ...state,
+                // newTopicSuccess: false,
+                // newTopicError: null,
+                // newTopicName: action.newTopic.name,
+                // newTopicDescription: action.newTopic.description,
+                newTopicLoading: true,
                 newTopicSuccess: false,
                 newTopicError: null,
                 newTopicName: action.newTopic.name,
@@ -109,18 +149,46 @@ export default function (state = initialState, action) {
         case CREATE_TOPIC_SUCCESS:
             return {
                 ...state,
+                // newTopicSuccess: true,
+                // newTopicName: '',
+                // newTopicDescription: '',
+                // newTopicId: action.newTopic.id,
+                // newTopicError: null,
+                newTopicLoading: false,
                 newTopicSuccess: true,
                 newTopicName: '',
                 newTopicDescription: '',
                 newTopicId: action.newTopic.id,
+                newTopicSlug: action.newTopic.slug,
+                newTopicShow: false,
                 newTopicError: null,
             };
         case CREATE_TOPIC_FAILURE:
             return {
                 ...state,
+                // newTopicSuccess: false,
+                // newTopicId: null,
+                // newTopicError: action.error,
+                newTopicLoading: false,
                 newTopicSuccess: false,
                 newTopicId: null,
+                newTopicSlug: null,
+                newTopicShow: true,
                 newTopicError: action.error,
+            };
+
+        case CREATE_TOPIC_SAVE:
+            return {
+            ...state,
+            newTopicName: action.name,
+            newTopicDescription: action.content,
+            };
+        case CREATE_TOPIC_TOGGLE:
+            return {
+            ...state,
+            newTopicShow: !state.newTopicShow,
+            newTopicSuccess: false,
+            newTopicError: null,
             };
 
         case DELETE_THREAD_REQUEST:

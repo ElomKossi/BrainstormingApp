@@ -1,11 +1,9 @@
 import React, { useEffect, Fragment } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Content from '../containers/Content'
 import { connect } from 'react-redux';
 import { checkAuthenticated, load_user } from '../actions/auth';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import Container from '@material-ui/core/Container';
 import { makeStyles } from '@material-ui/core/styles';
 
 const useStyles = makeStyles((theme) => ({
